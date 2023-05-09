@@ -3,6 +3,7 @@
 
 ### TODO:
 - DATASET * 
+- autoencoder (denoising, variation)
 
 ##### DATASET * 
 - sample, tracky, maybe templates a patterny
