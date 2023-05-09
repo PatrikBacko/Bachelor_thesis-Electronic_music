@@ -1,9 +1,7 @@
 ### TODO (high prio):
-- Dohodnúť stretká s Janom a Ľubom (čo najskôr!)
-- stiahnuť a nastaviť OBS na záznamy (do víkendu !)
+- Dohodnúť stretko s Ľubom
 
 ### TODO:
-- Používat Conda
 - DATASET * 
 
 ##### DATASET * 
@@ -18,4 +16,5 @@
     - skúsiť napísať väčším labelom a artistom, či by neboli ochotný
 
 ### TODO DONE:
+- Používat Conda
 - založiť git repo
