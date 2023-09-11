@@ -1,3 +1,8 @@
+import os
+import re
+
+from process_files import remove_dir_with_content
+
 class IVisitor:
     def file_action(self, path: str):
         pass
