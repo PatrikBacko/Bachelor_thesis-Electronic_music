@@ -1,11 +1,7 @@
 import os
 import re
 
-from visitors import IVisitor, RemoveVisitor
-
-def remove_dir_with_content(root_path: str):
-    process_content_recursively(root_path, RemoveVisitor())
-    os.rmdir(root_path)
+from visitors.IVisitor import IVisitor
 
 def process_content_recursively(root_path: str, visitor: IVisitor):
     for name in os.listdir(root_path):
