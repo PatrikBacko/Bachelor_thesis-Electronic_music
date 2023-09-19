@@ -1,20 +1,15 @@
-### TODO (high prio):
-- Dohodnúť stretko s Ľubom
-
 ### TODO:
-- DATASET * 
+- DATASET drums samples * 
+- Python web app
 - autoencoder (denoising, variation)
 
-##### DATASET * 
-- sample, tracky, maybe templates a patterny
-- popýtať sa artistov !
+##### DATASET drum samples * 
+- stiahnuť sample DONE
+- roztriediť sample:
+  - podľa typu bubna DONE
+  - zalogovať 
+  - podľa žánru
 
-- menší dataset:
-    - stiahnuť čo najskôr, nech keď už budú rock solid nápady, aby som mal s čím pracovať
-    - posťahovať z netu ?
-- väčší dataset:
-    - webscraping
-    - skúsiť napísať väčším labelom a artistom, či by neboli ochotný
 
 ### TODO DONE:
 - Používat Conda
