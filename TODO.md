@@ -7,7 +7,7 @@
 - stiahnuť sample DONE
 - roztriediť sample:
   - podľa typu bubna DONE
-  - zalogovať 
+  - zalogovať DONE
   - podľa žánru
 
 
