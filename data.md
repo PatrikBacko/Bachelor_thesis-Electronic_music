@@ -9,3 +9,15 @@ hat - 2700
 ride - 387
 tom - 912
 other - 3020
+
+## **genres:** (TODO, add numbers)
+- DnB
+- Dubstep
+- EDM
+- Techno
+- Trap
+- House
+- Trance
+- Hip-Hop
+- Funk ??
+- Lofi ??

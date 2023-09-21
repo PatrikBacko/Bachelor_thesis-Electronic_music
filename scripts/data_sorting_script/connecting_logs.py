@@ -32,10 +32,8 @@ class Log_visitor(Visitor):
         self.counter += 1
 
         rel_path = self.dict[name]
-        if rel_path.endswith("\n"):
-            rel_path = rel_path[:-1]
 
-        self.csv_file.write(f"{new_name}|{rel_path}\n")
+        self.csv_file.write(f"{new_name}|{rel_path}")
         self.csv_file.flush()
 
         shutil.copyfile(path, os.path.join(self.dest_path, new_name))
@@ -57,7 +55,12 @@ def connect_csv_files(source_path, sample_name, dest_path):
             lines = csv_f.readlines()
             for line in lines:
                 line = line.split(";")
-                dict[line[0]] = line[1]
+                name = line[0]
+                rel_path = line[1]
+                if len(line) > 2:
+                    for i in range(2,len(line)):
+                        rel_path += ";" + line[i]
+                dict[name] = rel_path
 
     with open(os.path.join(dest_path, f"{sample_name}_paths.csv"), "w") as csv_file:
         csv_file.write("sample_name|relative_path_in_original_dataset\n")
@@ -68,8 +71,8 @@ def connect_csv_files(source_path, sample_name, dest_path):
 
 
 def main():
-    SAMPLE_NAME = r"ride"
-    SOURCE_PATH = r"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots-not_ready\cymbal\ride"
+    SAMPLE_NAME = r"kick"
+    SOURCE_PATH = r"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots-not_ready\kick"
     DEST_PATH = fr"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots\{SAMPLE_NAME}"
 
     if not os.path.exists(DEST_PATH):
