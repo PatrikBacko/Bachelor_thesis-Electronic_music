@@ -22,4 +22,5 @@
   - podľa žánru DONE
   - napísať info o datach do data.md (prio) ***
     - prerobiť názvy samplov (pridať trailing zeros)
+    - pridať linky na data (z onedrivu)
 
