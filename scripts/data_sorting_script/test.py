@@ -1,9 +1,5 @@
-import pandas as pd
+import os
 
-SAMPLE_NAME = "kick"
-PATH = Fr"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots\{SAMPLE_NAME}\{SAMPLE_NAME}_genres.csv"
+path = r"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots"
 
-dataset = pd.read_csv(PATH, sep="|")
-
-#print count of samples for each genre
-print(dataset["name"][dataset["genre"] == "House" ].count())
+print(list(map(lambda path: os.path.basename(path), os.listdir(path))))
