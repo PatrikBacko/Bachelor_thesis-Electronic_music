@@ -1,2 +1,6 @@
 # Bachelor_thesis-Electronic_music
-Bakalárska práca o elektronickej hudbe, webová aplikácia ktorá bude obsahovať neurónovú sieť ktorá generovať one-shot sample rôznych bicií podľa žánru, typu bubna a iných parametrov.
+Bachelor thesis about electronic music. The goal of this theses is to create a neural network, which will be able to generate drum one-shot samples with emphasis on drum-type or genre of the sample.
+
+Neural network will be trained on dataset with thousands of one-shots, which is also created by me, and can be found in this repository (data.md).
+
+Also whole network will run on python web app developed in Django framework. So it will be possible to generate samples in your browser. This app will also be available in this repository.

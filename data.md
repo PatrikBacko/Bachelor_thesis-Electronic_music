@@ -1,22 +1,23 @@
-## Todo add links to onedrive folder where the data is stored
-## add some more info about the data ??? (ask hajic)
+# Drum one-shot samples Dataset
+- Dataset contains thousands of electronic and acoustic drum one-shot samples. These one-shots are sorted by drum type and electronic genre. 
+- Data are sorted into directories named after drum type of samples which are inside. Inside these directories are 2 ".csv" files and directory with ".wav" samples. 
+  - First file is called "{drum_type}_paths.csv" and for each sample contains relative path to the original sample, in raw dataset.
+  - Second file is called "{drum_type}_genres.csv" and for each sample contains its genre.
+- There are also raw data, which are downloaded .zip directories from which the data were sorted.
+  - raw data directory also contains "raw_data_origin.csv" files with links to sites from which the data were downloaded.
 
-## Samples and number of samples per type:
+### Drum Types:
+- kick
+- snare
+- clap
+- tom
+- crash
+- cymbal
+- hat
+- ride
+- other
 
-|Drum type|Count|
-|------|------|
-|kick|4045|
-|snare|3060|
-|clap|1103|
-|crash|478|
-|cymbal|276|
-|hat|2700|
-|ride|387|
-|tom|912|
-|other|3020|
-|**Total**|**15981**|
-
-## Genres:
+### Genres:
 - DnB
 - Dubstep
 - EDM
@@ -29,156 +30,23 @@
 - Lofi
 - Unclassified
 
-## Number of samples per genre:
+### Onedrive links to download:
+- [Raw data](https://cunicz-my.sharepoint.com/personal/22056127_cuni_cz/_layouts/15/onedrive.aspx?id=%2Fpersonal%2F22056127%5Fcuni%5Fcz%2FDocuments%2FBakalaris%2Ddata%2Fraw%5Fdata&view=0)
+- [Sorted data](https://cunicz-my.sharepoint.com/:f:/g/personal/22056127_cuni_cz/EnKfBOcrdGhCvrBcEmO8AlQB4PW03dqRuabq66f2ZQFw3Q?e=Xz6snE)
 
-### clap
+## Number of samples per genre and drum type:
 
-|Genre|Count|
-|------|------|
-|DnB|16|
-|Dubstep|17|
-|EDM|95|
-|Techno|32|
-|Trap|71|
-|House|151|
-|Trance|23|
-|Hip-Hop|56|
-|Funk|0|
-|Lofi|19|
-|Unclassified|623|
-
-
-### crash
-
-|Genre|Count|
-|------|------|
-|DnB|3|
-|Dubstep|14|
-|EDM|42|
-|Techno|0|
-|Trap|33|
-|House|23|
-|Trance|36|
-|Hip-Hop|12|
-|Funk|4|
-|Lofi|2|
-|Unclassified|309|
-
-
-### cymbal
-
-|Genre|Count|
-|------|------|
-|DnB|20|
-|Dubstep|0|
-|EDM|0|
-|Techno|20|
-|Trap|8|
-|House|30|
-|Trance|0|
-|Hip-Hop|21|
-|Funk|0|
-|Lofi|0|
-|Unclassified|177|
-
-
-### hat
-
-|Genre|Count|
-|------|------|
-|DnB|95|
-|Dubstep|32|
-|EDM|135|
-|Techno|121|
-|Trap|100|
-|House|250|
-|Trance|54|
-|Hip-Hop|97|
-|Funk|18|
-|Lofi|41|
-|Unclassified|1757|
-
-
-### kick
-
-|Genre|Count|
-|------|------|
-|DnB|107|
-|Dubstep|44|
-|EDM|516|
-|Techno|119|
-|Trap|154|
-|House|277|
-|Trance|47|
-|Hip-Hop|72|
-|Funk|2|
-|Lofi|26|
-|Unclassified|2681|
-
-
-### other
-
-|Genre|Count|
-|------|------|
-|DnB|85|
-|Dubstep|5|
-|EDM|46|
-|Techno|157|
-|Trap|134|
-|House|123|
-|Trance|15|
-|Hip-Hop|57|
-|Funk|0|
-|Lofi|62|
-|Unclassified|2336|
-
-
-### ride
-
-|Genre|Count|
-|------|------|
-|DnB|19|
-|Dubstep|15|
-|EDM|46|
-|Techno|0|
-|Trap|35|
-|House|26|
-|Trance|0|
-|Hip-Hop|16|
-|Funk|5|
-|Lofi|0|
-|Unclassified|225|
-
-
-### snare
-
-|Genre|Count|
-|------|------|
-|DnB|90|
-|Dubstep|43|
-|EDM|252|
-|Techno|92|
-|Trap|117|
-|House|231|
-|Trance|32|
-|Hip-Hop|89|
-|Funk|15|
-|Lofi|30|
-|Unclassified|2069|
-
-
-### tom
-
-|Genre|Count|
-|------|------|
-|DnB|3|
-|Dubstep|21|
-|EDM|24|
-|Techno|14|
-|Trap|14|
-|House|23|
-|Trance|5|
-|Hip-Hop|16|
-|Funk|2|
-|Lofi|0|
-|Unclassified|790|
+||clap|crash|cymbal|hat|ride|kick|snare|tom|other|**Total**|
+|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+|DnB|16|3|20|95|19|107|90|3|85|438|
+|Dubstep|17|14|0|32|15|44|43|21|5|191|
+|EDM|95|42|0|135|46|516|252|24|46|1156|
+|Techno|32|0|20|121|0|119|92|14|157|555|
+|Trap|71|33|8|100|35|154|117|14|134|666|
+|House|151|23|30|250|26|277|231|23|123|1134|
+|Trance|23|36|0|54|0|47|32|5|15|212|
+|Hip-Hop|56|12|21|97|16|72|89|16|57|436|
+|Funk|0|4|0|18|5|2|15|2|0|46|
+|Lofi|19|2|0|41|0|26|30|0|62|180|
+|Unclassified|623|309|177|1757|225|2681|2069|790|2336|10967|
+|**Total**|1103|478|276|2700|387|4045|3060|912|3020|15981|
