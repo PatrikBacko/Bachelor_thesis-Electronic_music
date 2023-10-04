@@ -4,6 +4,7 @@
 - Drysdale, Jake, Maciej Tomczak, and Jason Hockman. "Style-based drum synthesis with GAN inversion." Extended Abstracts for the Late-Breaking Demo Session of the 22nd Int. Society for Music Information Retrieval Conference. 2021.
 - Hawley, Scott H., Vasileios Chatziiannou, and Andrew Morrison. "Synthesis of musical instrument sounds: Physics-based modeling or machine learning." Phys. Today 16.1 (2020): 20-28.
 - Lavault, Antoine, Axel Roebel, and Matthieu Voiry. "StyleWaveGAN: Style-based synthesis of drum sounds with extensive controls using generative adversarial networks." arXiv preprint arXiv:2204.00907 (2022).
+- variational autoencoder (VAE) 
 
 
 ### články
