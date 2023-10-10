@@ -1,5 +1,5 @@
 ### TODO:
-- prečítať článok + výťah z neho (high prio) ideálne do 2.10.2023 !!!
+- čítať články a robiť si poznámky
 - Python web app (current task) *
 - edit readme (it is better, but requires some adjacement in the future)
 - autoencoder (denoising, variation)
