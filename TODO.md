@@ -1,13 +1,12 @@
 ### TODO:
+- roundtrip librosa !!! (high prio), sound -> spectrogram -> sound
+- Python web app !!
 - čítať články a robiť si poznámky
-- Python web app (current task) *
 - edit readme (it is better, but requires some adjacement in the future)
 - autoencoder (denoising, variation)
 
-
 ##### Python web app *
 - prečítať si o django
-
 
 ### TODO DONE:
 - Používat Conda

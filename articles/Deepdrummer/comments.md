@@ -12,6 +12,7 @@ Uses no dataset of drum loops, only a dataset of drum one-shots
   - output is a probability of user liking the drum loop ([0,1] interval)
   - binary label (like/dislike)
   - input is a *MFCC* features of sound wave made by the pattern and one-shots
+
 - *feature preprocessing*
   - input - loop pattern and with drum one-shots
   - output is a sound wave represented by *MFCC* features
@@ -30,6 +31,7 @@ Uses no dataset of drum loops, only a dataset of drum one-shots
 - https://cs.wikipedia.org/wiki/Markov_chain_Monte_Carlo DONE
 - https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm DONE
 - https://dl.acm.org/doi/abs/10.1145/2557500.2557544
+  - active learning, user feedback !!
 - https://proceedings.neurips.cc/paper_files/paper/2014/file/5ca3e9b122f61f8f06494c97b1afccf3-Paper.pdf
 
 ## interesting parts:

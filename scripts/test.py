@@ -1,4 +1,5 @@
 import os
+import django
 
 path = r"C:\Users\llama\Desktop\programming shit\Bakalarka\Bakalaris-data\drums-one_shots"
 
