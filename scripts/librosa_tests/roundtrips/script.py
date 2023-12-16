@@ -37,7 +37,6 @@ import pyaudio
 import argparse
 import os
 
-import keyboard
 
 FEATURE_EXTRACTION_METHODS = ["mfcc", "mel", "stft"]
 

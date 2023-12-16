@@ -1,0 +1,12 @@
+features
+    - urciť si maximálnu dĺŽky x a dplňovať/odrazávať *
+        - skússiť najskôr odrezať specktogram (skúšať s vlnou)
+
+    - trasponovať sample na jednotný čas (natiahnuť alebo skrátiť) a zapísať si kkoeficient skracovania/natianutia
+        - učiť sieť ak tento keoficient (pridať to k featuram) a vlastný dekóder ??
+        - histogram délek samplov v jednotlivých kategóriach
+        - (past zošit posledná strana)
+
+výpočty
+    - skúsiť metaceantrum  !!!
+    - UFAL AIC (poprípade skúsiť toto) 
