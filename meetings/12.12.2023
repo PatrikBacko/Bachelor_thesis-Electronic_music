@@ -10,3 +10,6 @@ features
 výpočty
     - skúsiť metaceantrum  !!!
     - UFAL AIC (poprípade skúsiť toto) 
+
+Questions: 
+- Nerobiť žiadnu tranformáciu do special features, ale pchať do neurónky rovno wave ?? 
