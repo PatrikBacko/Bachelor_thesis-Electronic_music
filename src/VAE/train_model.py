@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''
 Script for training the model (Variational Autoencoder) on given samples and saving it.
 '''
@@ -147,4 +148,3 @@ def main(args):
 if __name__ == '__main__':
     args = build_arguments()
     main(args)
-    
