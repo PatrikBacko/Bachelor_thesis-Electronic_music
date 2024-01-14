@@ -21,7 +21,7 @@ def build_arguments():
     '''
     builds arguments for the script
     '''
-    
+
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument('source_dir', type=str, help='Path to directory with samples.')
@@ -147,3 +147,4 @@ def main(args):
 if __name__ == '__main__':
     args = build_arguments()
     main(args)
+    
