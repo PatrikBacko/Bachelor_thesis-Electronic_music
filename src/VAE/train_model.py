@@ -79,7 +79,7 @@ def train(model, train_loader, epochs, device):
     print('Finished training.') 
 
     return losses
-    
+
 def pad_or_trim(mfcc, length = 100):
     '''
     pads or trims mfcc to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
