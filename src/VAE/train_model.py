@@ -136,15 +136,13 @@ def train(model, train_loader, epochs, device):
 
 def main(args):
 
-    model = VAE_1(latent_dim)
+    model = VAE_1(args.latent_dim)
 
-    train_loader = prepare_data(args.source_dir, args.batch_size ,length = 100)
+    train_loader = prepare_data(args.source_dir, args.batch_size, length = 100)
 
-    latent_dim = args.latent_dim
-    epochs = args.epoch
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    losses = train(model, train_loader, epochs, device)
+    losses = train(model, train_loader, args.epoch, device)
 
     torch.save(model.state_dict(), args.model_path)
 
