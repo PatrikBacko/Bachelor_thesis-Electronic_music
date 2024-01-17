@@ -29,9 +29,60 @@ def build_arguments():
     parser.add_argument('model_path', type=str, help='Path to save model.')
     parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model.')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model.')
 
     return parser.parse_args()
 
+
+
+def pad_or_trim(mfcc, length = 100):
+    '''
+    pads or trims mfcc to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
+
+    params:
+        mfcc - mfcc to pad or trim
+        length - length to pad or trim to (default is 100)
+
+    returns:
+        mfcc - padded or trimmed mfcc
+    '''
+
+    if mfcc.shape[1] > length:
+        return mfcc[:, :length]
+    else:
+        last_column = mfcc[:, -1:]
+        padding = np.repeat(last_column, length - mfcc.shape[1], axis=1)
+        return np.concatenate((mfcc, padding), axis=1)
+
+def prepare_data(source_dir, batch_size = 32, length = 100):
+    '''
+    gets path to directory with samples, and returns a dataloader with padded or trimmed mfccs of the samples
+    ! padded or trimmed to cca 1 second with 256 hop length and 512 n_fft and 44100 sr !
+
+    params:
+        source_dir - path to directory with samples
+        length - length to pad or trim to (default is 100)
+
+    returns:
+        train_loader - dataloader with padded or trimmed mfccs of the samples
+    '''
+
+    paths_to_samples = [os.path.join(source_dir, path) for path in os.listdir(source_dir)]
+
+    mfccs = []
+
+    for path in paths_to_samples:
+            array, sr = lb.load(path)
+
+            mfcc = lb.feature.mfcc(y=array, sr=sr, n_mfcc=512, n_fft=512, hop_length=256, lifter=0, dct_type=3, n_mels = 256)
+            mfcc_pad_or_trim = pad_or_trim(mfcc, 100)
+
+            mfccs.append(mfcc_pad_or_trim)
+
+    mfccs_tensor = torch.tensor(mfccs).view(-1, 1, 256, 100)
+    train_loader = torch.utils.data.DataLoader(mfccs_tensor, batch_size=batch_size, shuffle=True)
+
+    return train_loader
 
 
 def loss_function(reconstructed_x, x, mu, logvar):
@@ -68,6 +119,7 @@ def train(model, train_loader, epochs, device):
             x = x.to(device)
             optimizer.zero_grad()
             reconstructed_x, mu, logvar = model(x)
+
             loss = loss_function(reconstructed_x, x, mu, logvar)
             loss.backward()
             train_loss += loss.item()
@@ -79,62 +131,13 @@ def train(model, train_loader, epochs, device):
     print('Finished training.') 
 
     return losses
-
-def pad_or_trim(mfcc, length = 100):
-    '''
-    pads or trims mfcc to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
-
-    params:
-        mfcc - mfcc to pad or trim
-        length - length to pad or trim to (default is 100)
-
-    returns:
-        mfcc - padded or trimmed mfcc
-    '''
-
-    if mfcc.shape[1] > length:
-        return mfcc[:, :length]
-    else:
-        last_column = mfcc[:, -1:]
-        padding = np.repeat(last_column, length - mfcc.shape[1], axis=1)
-        return np.concatenate((mfcc, padding), axis=1)
-
-def prepare_data(source_dir, length = 100):
-    '''
-    gets path to directory with samples, and returns a dataloader with padded or trimmed mfccs of the samples
-    ! padded or trimmed to cca 1 second with 256 hop length and 512 n_fft and 44100 sr !
-
-    params:
-        source_dir - path to directory with samples
-        length - length to pad or trim to (default is 100)
-
-    returns:
-        train_loader - dataloader with padded or trimmed mfccs of the samples
-    '''
-
-    paths_to_samples = [os.path.join(source_dir, path) for path in os.listdir(source_dir)]
-
-    mfccs = []
-
-    for path in paths_to_samples:
-            array, sr = lb.load(path)
-
-            mfcc = lb.feature.mfcc(y=array, sr=sr, n_mfcc=512, n_fft=512, hop_length=256, lifter=0, dct_type=3, n_mels = 256)
-            mfcc_pad_or_trim = pad_or_trim(mfcc, 100)
-
-            mfccs.append(mfcc_pad_or_trim)
-
-    mfccs_tensor = torch.tensor(mfccs).view(-1, 1, 256, 100)
-    train_loader = torch.utils.data.DataLoader(mfccs_tensor, batch_size=4, shuffle=True)
-
-    return train_loader
     
 
 def main(args):
 
     model = VAE_1(latent_dim)
 
-    train_loader = prepare_data(args.source_dir, length = 100)
+    train_loader = prepare_data(args.source_dir, args.batch_size ,length = 100)
 
     latent_dim = args.latent_dim
     epochs = args.epoch
