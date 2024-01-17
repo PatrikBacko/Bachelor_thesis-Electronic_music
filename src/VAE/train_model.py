@@ -10,11 +10,12 @@ import librosa as lb
 import soundfile as sf
 import pyaudio
 
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .VAE_1 import VAE_1
+from src.VAE.VAE_1 import VAE_1
 
 import argparse
 
