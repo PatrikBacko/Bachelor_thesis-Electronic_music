@@ -142,7 +142,13 @@ def main(args):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    losses = train(model, train_loader, args.epoch, device)
+    ### debug log ###
+    print('$$$$$$$$$$$$$$$$$$$$$$$')
+    print('Device: ', device)
+    print('$$$$$$$$$$$$$$$$$$$$$$$')
+    #################
+
+    losses = train(model, train_loader, args.epochs, device)
 
     torch.save(model.state_dict(), args.model_path)
 
