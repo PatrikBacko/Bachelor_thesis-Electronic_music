@@ -161,11 +161,12 @@ def main(args):
     data_path = os.path.join(args.source_dir, args.sample_group)
     log_file = open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'a')
 
-    model = VAE_1(args.latent_dim)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
     train_loader = prepare_data(data_path, args.batch_size, length = 100)
-
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    ##TODO: check if this is correct
+    model = VAE_1(args.latent_dim).to(device)
 
     ### debug log ###
     print('$$$$$$$$$$$$$$$$$$$$$$$', file=log_file)
