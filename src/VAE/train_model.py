@@ -159,7 +159,7 @@ def log_model_config(args, config_file):
 # TODO:implement function for loading data from all sample groups at once
 def main(args):
     data_path = os.path.join(args.source_dir, args.sample_group)
-    log_file = open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'a')
+    log_file = open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w')
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -181,7 +181,7 @@ def main(args):
 
     log_file.close()
 
-    with open(os.path.join(args.output_path, f'{args.model_name}_config'), 'a') as config_file:
+    with open(os.path.join(args.output_path, f'{args.model_name}_config'), 'w') as config_file:
         log_model_config(args, config_file)
 
 
