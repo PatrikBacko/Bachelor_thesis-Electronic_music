@@ -32,10 +32,42 @@ def loss_function(reconstructed_x, x, mu, logvar):
     kl_divergence = - 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     return (reconstruction_loss + kl_divergence)
 
+def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.tensor:
+    '''
+    Add noise to the batch of spectograms
 
-def train(model, train_loader, epochs, device, log_file):
+    params:
+        - batch: batch to add noise to
+        - noise_function: function to add noise to the batch
+
+    returns:
+        - batch with added noise
+    '''
+    batch = batch.view(batch.shape[0], batch.shape[2], batch.shape[3])
+
+    noised_batch = batch.clone()
+
+    for i in range(batch.shape[0]):
+        noised_batch[i,:,:] = noise_function(noised_batch[i, :, :])
+
+    return noised_batch.view(batch.shape[0], 1, batch.shape[1], batch.shape[2])
+
+
+
+def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x):
     '''
     trains the model
+
+    params:
+        model - model to train
+        train_loader - dataloader with training data
+        epochs - number of epochs to train the model
+        device - device to train the model on
+        log_file - file to write logs to
+        noise_function - function to add noise to the spectogram
+
+    returns:
+        losses - list of losses for each epoch
     '''
     print('Training model...', file=log_file)
 
@@ -48,9 +80,13 @@ def train(model, train_loader, epochs, device, log_file):
     for epoch in range(epochs):
         train_loss = 0
         for batch_idx, x in enumerate(train_loader):
+            noised_x = noise_function(x)
+            
             x = x.to(device)
+            noised_x = noised_x.to(device)
+
             optimizer.zero_grad()
-            reconstructed_x, mu, logvar = model(x)
+            reconstructed_x, mu, logvar = model(noised_x)
 
             loss = loss_function(reconstructed_x, x, mu, logvar)
             loss.backward()
@@ -63,4 +99,3 @@ def train(model, train_loader, epochs, device, log_file):
     print('Finished training.', file=log_file) 
 
     return losses
-
