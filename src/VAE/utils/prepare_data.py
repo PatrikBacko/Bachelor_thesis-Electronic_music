@@ -107,8 +107,7 @@ def return_data_loader(mfccs_list, batch_size = 32):
     return train_loader
 
 def prepare_data(data_dir, sample_groups_list, length = 100, batch_size = 32):
-    '''
-    prepares the data for training
+    '''prepares the data for training
 
     params:
         source_dir - path to directory with samples
