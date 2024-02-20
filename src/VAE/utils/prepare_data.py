@@ -14,6 +14,31 @@ import torch.nn.functional as F
 
 import argparse
 
+MFCC_KWARGS = {
+    'n_mfcc': 512,
+    'dct_type': 2,
+    'norm': "ortho",
+    'lifter': 0,
+
+    #mel spectrogram kwargs
+    'n_fft': 512,  
+    'hop_length': 256,
+    'win_length': 512,
+    'window': "hann",
+    'center': True,
+    'pad_mode': "constant",
+    'power': 2.0,
+
+    #mel filterbank kwargs
+    'n_mels': 256,
+    'fmin': 0.0,
+    'fmax': None,
+    'htk': False,
+    'dtype': np.float32
+    }
+
+
+
 def pad_or_trim(mfcc, length):
     '''
     pads or trims mfcc to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
@@ -57,7 +82,7 @@ def convert_to_mfcc(paths_to_samples, length = 100):
     for path in paths_to_samples:
             array, sr = lb.load(path)
             #TODO: MFCC **kwargs to be set in the config file, or at least in constant in this script
-            mfcc = lb.feature.mfcc(y=array, sr=sr, n_mfcc=512, n_fft=512, hop_length=256, lifter=0, dct_type=3, n_mels = 256)
+            mfcc = lb.feature.mfcc(y=array, sr=sr, **MFCC_KWARGS)
             mfcc_pad_or_trim = pad_or_trim(mfcc, length)
 
             mfccs.append(mfcc_pad_or_trim)
