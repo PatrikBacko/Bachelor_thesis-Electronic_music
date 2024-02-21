@@ -65,8 +65,24 @@ def get_paths_to_samples(data_dir, sample_groups_list):
         paths_to_samples.extend([os.path.join(sample_group_path, sample)for sample in os.listdir(sample_group_path)])
 
     return paths_to_samples
+
+def load_waves(paths_to_samples):
+    '''
+    Gets list of paths to samples and returns list of loaded waves with their sample rates by librosa
+
+    params:
+        paths_to_samples - list of paths to samples
     
-def convert_to_mfcc(paths_to_samples, length = 100):
+    returns:
+        waves - list of loaded waves with their sample rates
+    '''
+    waves = []
+    for path in paths_to_samples:
+        wave, sr = lb.load(path)
+        waves.append((wave,sr))
+    return waves
+    
+def convert_to_mfcc(waves, length = 100):
     '''
     Gets list of paths to samples and returns list of converted samples to mfcc (and padded or trimmed to given length, default is 100)
 
@@ -79,10 +95,9 @@ def convert_to_mfcc(paths_to_samples, length = 100):
     '''
     mfccs = []
 
-    for path in paths_to_samples:
-            array, sr = lb.load(path)
+    for wave, sr in waves:
             #TODO: MFCC **kwargs to be set in the config file, or at least in constant in this script
-            mfcc = lb.feature.mfcc(y=array, sr=sr, **MFCC_KWARGS)
+            mfcc = lb.feature.mfcc(y=wave, sr=sr, **MFCC_KWARGS)
             mfcc_pad_or_trim = pad_or_trim(mfcc, length)
 
             mfccs.append(mfcc_pad_or_trim)
@@ -120,7 +135,8 @@ def prepare_data(data_dir, sample_groups_list, length = 100, batch_size = 32):
     '''
 
     paths_to_samples = get_paths_to_samples(data_dir, sample_groups_list)
-    mfccs = convert_to_mfcc(paths_to_samples, length)
+    waves = load_waves(paths_to_samples)
+    mfccs = convert_to_mfcc(waves, length)
     train_loader = return_data_loader(mfccs, batch_size)
 
     return train_loader
