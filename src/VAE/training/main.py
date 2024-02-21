@@ -98,6 +98,8 @@ def log_model_config(args, config_file):
     print('\tNoise variance: ', args.variance, file=config_file)
     print('\tNoise mean: ', args.mean, file=config_file)
     print('******************', file=config_file)
+    print('Sample groups: ', args.sample_group, file=config_file)
+    print('******************', file=config_file)
     print(f'command line arguments: {args}', file=config_file)
     
 
