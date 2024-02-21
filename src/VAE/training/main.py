@@ -48,7 +48,7 @@ def build_arguments():
 
 
     #Noise arguments
-    parser.add_argument('--noise', action='store_true', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
+    parser.add_argument('-n','--noise', action='store_true', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
                         'if this switch is not used, other arguments will be ignored.\n')
     
     #argument for noise variance
