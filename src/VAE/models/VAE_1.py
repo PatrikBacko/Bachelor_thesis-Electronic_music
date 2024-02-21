@@ -14,15 +14,10 @@ class Encoder(nn.Module):
         self.fc_logvar = nn.Linear(latent_dim, latent_dim)
 
     def forward(self, x):
-        # print(f"Encoder input shape: {x.shape}")
         x = F.relu(self.conv1(x))
-        # print(f"Encoder shape after conv1: {x.shape}")
         x = F.relu(self.conv2(x))
-        # print(f"Encoder shape after conv2: {x.shape}")
         x = nn.Flatten()(x)
-        # print(f"Encoder shape after flatten: {x.shape}")
         x = F.relu(self.fc(x))
-        # print(f"Encoder shape after fc: {x.shape}")
         mu = self.fc_mu(x)
         logvar = self.fc_logvar(x)
         return mu, logvar
@@ -35,19 +30,10 @@ class Decoder(nn.Module):
         self.deconv2 = nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=3, stride=2, padding=0, output_padding=1)
 
     def forward(self, x):
-        # print()
-        # print(f"Dencoder input shape: {x.shape}")
         x = F.relu(self.fc(x))
-        # print(f"Decoder shape after fc: {x.shape}")
         x = x.view(-1, 16, 63, 24)
-        # print(f"Decoder shape after view: {x.shape}")
         x = F.relu(self.deconv1(x))
-        # print(f"Decoder shape after deconv1: {x.shape}")
         x = self.deconv2(x)
-        # print(f"Decoder shape after deconv2: {x.shape}")
-
-        #Mirroring of weights with encoder
-        # F.ConvTranspose(weight = endocer layers ...)
         
         return x
 
