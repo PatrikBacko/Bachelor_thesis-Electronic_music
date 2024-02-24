@@ -33,9 +33,9 @@ def build_arguments():
     parser = argparse.ArgumentParser(description=__doc__)
 
     #required arguments
-    parser.add_argument('data_dir', type=str, required=True, help='Required, Path to directory with samples.')
-    parser.add_argument('output_path', type=str, required=True, help='Required, Path to directory where to save the model and logs etc.')
-    parser.add_argument('--model_name', type=str, required=True, help='Required, Name of the log file.')
+    parser.add_argument('data_dir', type=str, help='Required, Path to directory with samples.')
+    parser.add_argument('output_path', type=str, help='Required, Path to directory where to save the model and logs etc.')
+    parser.add_argument('--model_name', type=str, help='Required, Name of the log file.')
 
     #optional arguments
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'
@@ -128,8 +128,8 @@ def main(args):
                     f'\tNoise scope: {args.scope}\n'
                     f'\tNoise variance: {args.variance}\n'
                     f'\tNoise mean: {args.mean}\n', file=log_file)
-            
-        else: 
+
+        else:
             noise_function = lambda x:x
             print('No noise added to the spectograms.\n', file=log_file)
         
