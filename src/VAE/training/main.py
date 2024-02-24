@@ -4,6 +4,11 @@ Script for training the model (Variational Autoencoder) on given samples and sav
 usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional args] 
 '''
 
+# # TEMPORARY
+# import sys
+# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+# # TEMPORARY
+
 import math
 import os
 
@@ -88,8 +93,8 @@ def log_model_config(args, config_file):
     print('Model: ', args.model, file=config_file)
     print('\tLatent dimension: ', args.latent_dim, file=config_file)
     print('\tEpochs: ', args.epochs, file=config_file)
-    print('\tBatch size: ', args.batch_size, files=config_file)
-    print('\tBatch size: ', args.batch_size, files=config_file)
+    print('\tBatch size: ', args.batch_size, file=config_file)
+    print('\tBatch size: ', args.batch_size, file=config_file)
     print('******************', file=config_file)
     print('Noise config:', file=config_file)
     print('\tNoise distribution: ', args.distribution, file=config_file)
@@ -111,7 +116,7 @@ def main(args):
             sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride']
         else:
             sample_groups = args.sample_group.split(',')
-        train_loader = prepare_data(args.data_dir, sample_groups, args.batch_size, length)
+        train_loader = prepare_data(args.data_dir, sample_groups, length=length, batch_size=args.batch_size)
         print(f'Data prepared for training. Sample groups: {", ".join(sample_groups)}\n, mfcc length: {length}, data directory {args.data_dir}', file=log_file)
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -137,7 +142,7 @@ def main(args):
 
         losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function)
 
-        torch.save(model.state_dict(), args.output_path)
+        torch.save(model.state_dict(), os.path.join(args.output_path, f'model_{args.model_name}.pkl'))
         print(f'Model saved to {args.output_path}', file=log_file)
 
 

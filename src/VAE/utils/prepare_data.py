@@ -58,7 +58,30 @@ def pad_or_trim(mfcc, length):
         padding = np.repeat(last_column, length - mfcc.shape[1], axis=1)
         return np.concatenate((mfcc, padding), axis=1)
     
+def pad_or_trim_list(mfccs, length = 100):
+    '''
+    pads or trims list of mfccs to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
+
+    params:
+        mfccs - list of mfccs to pad or trim
+        length - length to pad or trim to (default is 100)
+
+    returns:    
+        mfccs - list of padded or trimmed mfccs
+    '''
+    return [pad_or_trim(mfcc, length) for mfcc in mfccs]
+    
 def get_paths_to_samples(data_dir, sample_groups_list):
+    '''
+    Gets list of sample groups and data directory, then returns list of paths to samples
+    
+    params:
+        data_dir - path to directory with samples
+        sample_groups_list - list of sample groups
+
+    returns:
+        paths_to_samples - list of paths to samples
+    '''
     paths_to_samples = []
     for sample_group in sample_groups_list:
         sample_group_path = os.path.join(data_dir, sample_group, f'{sample_group}_samples')
@@ -82,13 +105,12 @@ def load_waves(paths_to_samples):
         waves.append((wave,sr))
     return waves
     
-def convert_to_mfcc(waves, length = 100):
+def convert_to_mfcc(waves):
     '''
-    Gets list of paths to samples and returns list of converted samples to mfcc (and padded or trimmed to given length, default is 100)
+    Gets list of paths to samples and returns list of converted samples to mfcc spectrograms
 
     params:
         paths_to_samples - list of paths to samples
-        length - length to pad or trim to (default is 100)
 
     returns:
         mfccs - list of mfccs of the samples
@@ -98,9 +120,8 @@ def convert_to_mfcc(waves, length = 100):
     for wave, sr in waves:
             #TODO: MFCC **kwargs to be set in the config file, or at least in constant in this script
             mfcc = lb.feature.mfcc(y=wave, sr=sr, **MFCC_KWARGS)
-            mfcc_pad_or_trim = pad_or_trim(mfcc, length)
 
-            mfccs.append(mfcc_pad_or_trim)
+            mfccs.append(mfcc)
     return mfccs
 
 def return_data_loader(mfccs_list, batch_size = 32):
@@ -136,7 +157,8 @@ def prepare_data(data_dir, sample_groups_list, length = 100, batch_size = 32):
 
     paths_to_samples = get_paths_to_samples(data_dir, sample_groups_list)
     waves = load_waves(paths_to_samples)
-    mfccs = convert_to_mfcc(waves, length)
-    train_loader = return_data_loader(mfccs, batch_size)
+    mfccs = convert_to_mfcc(waves)
+    padded_mfccs = pad_or_trim_list(mfccs, length)
+    train_loader = return_data_loader(padded_mfccs, batch_size)
 
     return train_loader

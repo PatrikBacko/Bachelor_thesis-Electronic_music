@@ -83,7 +83,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
             noised_x = noise_function(x)
             
             x = x.to(device)
-            noised_x = noised_x.to(device)
+            noised_x = noised_x.to(device) 
 
             optimizer.zero_grad()
             reconstructed_x, mu, logvar = model(noised_x)

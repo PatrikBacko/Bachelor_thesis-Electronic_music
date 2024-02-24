@@ -59,7 +59,7 @@ def add_noise(spectogram, noise) -> callable:
     returns:
         - spectogram with added noise
     """
-    return spectogram + noise
+    return spectogram + noise.astype(np.float32)
 
 def multiply_noise(spectogram, noise) -> callable:
     """
@@ -72,7 +72,7 @@ def multiply_noise(spectogram, noise) -> callable:
     returns:
         - spectogram multiplied with noise
     """
-    return spectogram * noise
+    return spectogram * noise.astype(np.float32)
 
 
 
