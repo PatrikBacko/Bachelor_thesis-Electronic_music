@@ -90,10 +90,9 @@ def log_model_config(args, config_file):
     '''
     print('******************', file=config_file)
     print(f'Model {args.model_name} config:', file=config_file)
-    print('Model: ', args.model, file=config_file)
+    print('\tModel: ', args.model, file=config_file)
     print('\tLatent dimension: ', args.latent_dim, file=config_file)
     print('\tEpochs: ', args.epochs, file=config_file)
-    print('\tBatch size: ', args.batch_size, file=config_file)
     print('\tBatch size: ', args.batch_size, file=config_file)
     print('******************', file=config_file)
     print('Noise config:', file=config_file)
