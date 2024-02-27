@@ -108,6 +108,9 @@ def log_model_config(args, config_file):
     
 
 def main(args):
+    if not os.path.exists(args.output_path):
+        os.mkdir(args.output_path)
+
     with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w') as log_file: 
         
         length = 100  #length of the spectogram to be trimmed or padded to. With the current settings of mfcc conversion, it is around 1 seconds of audio
