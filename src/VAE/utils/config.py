@@ -32,13 +32,15 @@ class Config():
             self.scope = scope
 
 
-    def __init__(self, model_name='', sample_group='all', model='VAE_1', latent_dim=32, epochs=100, batch_size=32, noise=False, variance=0.0, mean=0.0, distribution='constant', operation='additive', scope='pixel', mfcc_kwargs=None):
+    def __init__(self, model_name='', sample_group='all', model='VAE_1', latent_dim=32, epochs=100, batch_size=32, noise=False, variance=0.0, mean=0.0, distribution='constant', operation='additive', scope='pixel', date_time= None, mfcc_kwargs=None):
         self.model_name = model_name
         self.sample_group = sample_group
         self.model = model
         self.latent_dim = latent_dim
         self.epochs = epochs
         self.batch_size = batch_size
+
+        self.date_time = date_time
 
         if noise:
             self.noise = self.Noise(variance, mean, distribution, operation, scope)
@@ -58,7 +60,20 @@ def save_config(path, args, mfcc_kwargs):
         args - arguments of the model
         mfcc_kwargs - kwargs for mfcc conversion config
     '''
-    config = Config(args.model_name, args.sample_group, args.model, args.latent_dim, args.epochs, args.batch_size, args.noise, args.variance, args.mean, args.distribution, args.operation, args.scope, mfcc_kwargs)
+    config = Config(model_name=args.model_name, 
+                    sample_group=args.sample_group, 
+                    model=args.model, 
+                    latent_dim=args.latent_dim, 
+                    epochs=args.epochs, 
+                    batch_size=args.batch_size, 
+                    noise=args.noise, 
+                    variance=args.variance, 
+                    mean=args.mean, 
+                    distribution=args.distribution, 
+                    operation=args.operation, 
+                    scope=args.scope, 
+                    date_time=datetime.now(), 
+                    mfcc_kwargs=mfcc_kwargs)
 
     pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
 
