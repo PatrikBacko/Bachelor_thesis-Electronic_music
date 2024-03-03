@@ -78,7 +78,7 @@ def save_config(path, args, mfcc_kwargs):
     pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
 
     with open(os.path.join(path, f'{args.model_name}_config.txt'), 'w') as config_file:
-        save_human_readable_config(args, config_file)
+        save_human_readable_config(args, mfcc_kwargs, config_file)
 
 
 
