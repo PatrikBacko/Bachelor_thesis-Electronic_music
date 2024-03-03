@@ -23,15 +23,6 @@ class Config():
     '''
     class for logging the config of the model into a pkl file
     '''
-    class Noise():
-        def __init__(self, variance, mean, distribution, operation, scope):
-            self.variance = variance
-            self.mean = mean
-            self.distribution = distribution
-            self.operation = operation
-            self.scope = scope
-
-
     def __init__(self, model_name='', sample_group='all', model='VAE_1', latent_dim=32, epochs=100, batch_size=32, noise=False, variance=0.0, mean=0.0, distribution='constant', operation='additive', scope='pixel', date_time= None, mfcc_kwargs=None):
         self.model_name = model_name
         self.sample_group = sample_group
@@ -43,7 +34,13 @@ class Config():
         self.date_time = date_time
 
         if noise:
-            self.noise = self.Noise(variance, mean, distribution, operation, scope)
+            self.noise = {
+                'variance': variance,
+                'mean': mean,
+                'distribution': distribution,
+                'operation': operation,
+                'scope': scope
+            }
         else:
             self.noise = None
 
@@ -79,8 +76,6 @@ def save_config(path, args, mfcc_kwargs):
 
     with open(os.path.join(path, f'{args.model_name}_config.txt'), 'w') as config_file:
         save_human_readable_config(args, mfcc_kwargs, config_file)
-
-
 
 def save_human_readable_config(args, mfcc_kwargs, config_file):
     '''
