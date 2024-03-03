@@ -111,7 +111,7 @@ def save_human_readable_config(args, mfcc_kwargs, config_file):
 
 
     print('******************', file=config_file)
-    print(f'Date and time: {datetime.now().strftime('%d/%h/%Y %H:%M')}', file=config_file)
+    print(f'Date and time: {datetime.now().strftime("%d/%h/%Y %H:%M")}', file=config_file)
     print('******************', file=config_file)
     print('MFCC conversion kwargs:', file=config_file)
     print(f'\tMFCC kwargs: {mfcc_kwargs}', file=config_file)

@@ -18,7 +18,7 @@ import torch.nn.functional as F
 
 from src.VAE.models.VAE_1 import VAE_1
 from src.VAE.training.train_model import train
-from src.VAE.utils.prepare_data import prepare_data 
+from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
 
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 
@@ -113,7 +113,7 @@ def main(args):
             noise_function = lambda x:x
             print('No noise added to the spectograms.\n', file=log_file)
         
-        ##TODO: implement different models
+        ##TODO: implement different models ??
 
         losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function)
 
@@ -121,8 +121,7 @@ def main(args):
         print(f'Model saved to {args.output_path}', file=log_file)
 
 
-    with open(os.path.join(args.output_path, f'{args.model_name}.config'), 'w') as config_file:
-        save_config(args, config_file)
+        save_config(args.output_path, args, MFCC_KWARGS)
 
 
 if __name__ == '__main__':
