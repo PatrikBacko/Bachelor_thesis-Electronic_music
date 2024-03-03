@@ -4,11 +4,6 @@ Script for training the model (Variational Autoencoder) on given samples and sav
 usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional args] 
 '''
 
-# # TEMPORARY
-# import sys
-# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
-# # TEMPORARY
-
 import math
 import os
 
@@ -26,6 +21,8 @@ from src.VAE.training.train_model import train
 from src.VAE.utils.prepare_data import prepare_data 
 
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
+
+from src.VAE.utils.config import save_config
 
 import argparse
 
@@ -83,30 +80,6 @@ def build_arguments():
     return parser.parse_args()
 
 
-
-def log_model_config(args, config_file):
-    '''
-    logs config of the model
-    '''
-    print('******************', file=config_file)
-    print(f'Model {args.model_name} config:', file=config_file)
-    print('\tModel: ', args.model, file=config_file)
-    print('\tLatent dimension: ', args.latent_dim, file=config_file)
-    print('\tEpochs: ', args.epochs, file=config_file)
-    print('\tBatch size: ', args.batch_size, file=config_file)
-    print('******************', file=config_file)
-    print('Noise config:', file=config_file)
-    print('\tNoise distribution: ', args.distribution, file=config_file)
-    print('\tNoise operation: ', args.operation, file=config_file)
-    print('\tNoise scope: ', args.scope, file=config_file)
-    print('\tNoise variance: ', args.variance, file=config_file)
-    print('\tNoise mean: ', args.mean, file=config_file)
-    print('******************', file=config_file)
-    print('Sample groups: ', args.sample_group, file=config_file)
-    print('******************', file=config_file)
-    print(f'command line arguments: {args}', file=config_file)
-    
-
 def main(args):
     if not os.path.exists(args.output_path):
         os.mkdir(args.output_path)
@@ -149,7 +122,7 @@ def main(args):
 
 
     with open(os.path.join(args.output_path, f'{args.model_name}.config'), 'w') as config_file:
-        log_model_config(args, config_file)
+        save_config(args, config_file)
 
 
 if __name__ == '__main__':
