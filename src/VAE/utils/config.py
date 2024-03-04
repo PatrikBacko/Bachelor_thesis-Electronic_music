@@ -23,13 +23,30 @@ class Config():
     '''
     class for logging the config of the model into a pkl file
     '''
-    def __init__(self, model_name='', sample_group='all', model='VAE_1', latent_dim=32, epochs=100, batch_size=32, noise=False, variance=0.0, mean=0.0, distribution='constant', operation='additive', scope='pixel', date_time= None, mfcc_kwargs=None):
+    def __init__(self, 
+                model_name='', 
+                sample_group='all', 
+                model='VAE_1', 
+                latent_dim=32, 
+                epochs=100,
+                batch_size=32, 
+                noise=False, 
+                variance=0.0, 
+                mean=0.0, 
+                distribution='constant', 
+                operation='additive', 
+                scope='pixel', 
+                date_time= None, 
+                mfcc_kwargs=None, 
+                pad_or_trim_length=None):
+        
         self.model_name = model_name
         self.sample_group = sample_group
         self.model = model
         self.latent_dim = latent_dim
         self.epochs = epochs
         self.batch_size = batch_size
+        self.pad_or_trim_length = pad_or_trim_length
 
         self.date_time = date_time
 
@@ -70,7 +87,8 @@ def save_config(path, args, mfcc_kwargs):
                     operation=args.operation, 
                     scope=args.scope, 
                     date_time=datetime.now(), 
-                    mfcc_kwargs=mfcc_kwargs)
+                    mfcc_kwargs=mfcc_kwargs,
+                    pad_or_trim_length=args.pad_or_trim_length)
 
     pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
 
@@ -91,7 +109,8 @@ def save_human_readable_config(args, mfcc_kwargs, config_file):
     print('\tLatent dimension: ', args.latent_dim, file=config_file)
     print('\tEpochs: ', args.epochs, file=config_file)
     print('\tBatch size: ', args.batch_size, file=config_file)
-    print('Sample groups: ', args.sample_group, file=config_file)
+    print('\tSample groups: ', args.sample_group, file=config_file)
+    print('\tPad or trim length: ', args.pad_or_trim_length, file=config_file)
 
     print('******************', file=config_file)
     if args.noise:

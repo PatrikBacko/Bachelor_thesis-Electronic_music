@@ -47,6 +47,8 @@ def build_arguments():
     parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model.')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model.')
+    parser.add_argument('--pad_or_trim_length', type=int, default=100, help='Length of the spectogram to be trimmed or padded to. '
+                                                                '(default is 100, With the current settings of mfcc conversion, it is around 1 seconds of audio)')
 
 
     #Noise arguments
@@ -86,13 +88,12 @@ def main(args):
 
     with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w') as log_file: 
         
-        length = 100  #length of the spectogram to be trimmed or padded to. With the current settings of mfcc conversion, it is around 1 seconds of audio
         if args.sample_group == 'all':
             sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride']
         else:
             sample_groups = args.sample_group.split(',')
-        train_loader = prepare_data(args.data_dir, sample_groups, length=length, batch_size=args.batch_size)
-        print(f'Data prepared for training. Sample groups: {", ".join(sample_groups)}\n, mfcc length: {length}, data directory {args.data_dir}', file=log_file)
+        train_loader = prepare_data(args.data_dir, sample_groups, length=args.pad_or_trim_length, batch_size=args.batch_size)
+        print(f'Data prepared for training. Sample groups: {", ".join(sample_groups)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
 
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f'Device : {device}\n', file=log_file)
