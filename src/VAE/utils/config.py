@@ -65,11 +65,46 @@ class Config():
 
         self.mfcc_kwargs = mfcc_kwargs
 
+    def toJson(self):
+        config_dict = self.__dict__
+        config_dict['date_time'] = self.date_time.strftime("%d/%m/%Y %H:%M")
+
+        return json.dumps(config_dict)
+    
+    @staticmethod
+    def fromJson(json_str):
+        config_dict = json.loads(json_str)
+
+        config  = Config()
+
+        config.model_name = config_dict['model_name']
+        config.sample_group = config_dict['sample_group']
+        config.model = config_dict['model']
+        config.latent_dim = config_dict['latent_dim']
+        config.epochs = config_dict['epochs']
+        config.batch_size = config_dict['batch_size']
+        config.pad_or_trim_length = config_dict['pad_or_trim_length']
+
+        config.date_time = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
+
+        if config_dict['noise']:
+            config.noise = {
+                'variance': config_dict['variance'],
+                'mean': config_dict['mean'],
+                'distribution': config_dict['distribution'],
+                'operation': config_dict['operation'],
+                'scope': config_dict['scope']
+            }
+
+        config.mfcc_kwargs = config_dict['mfcc_kwargs']
+
+        return config
+
 
 
 def save_config(path, args, mfcc_kwargs):
     '''
-    saves the config of the model to a pkl file using pickle, and saves the human readable version to a txt file
+    saves the config of the model to a json file
 
     params:
         path - path to the directory where to save the config
@@ -92,50 +127,18 @@ def save_config(path, args, mfcc_kwargs):
                     mfcc_kwargs=mfcc_kwargs,
                     pad_or_trim_length=args.pad_or_trim_length)
 
-    # pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
+    with open(os.path.join(path, f'{args.model_name}_config.json'), 'w') as config_file:
+        config_file.write(config.toJson())
 
-    json.dump(config, open(os.path.join(path, f'{args.model_name}_config.json'), 'w'))
-
-    # with open(os.path.join(path, f'{args.model_name}_config.txt'), 'w') as config_file:
-    #     save_human_readable_config(args, mfcc_kwargs, config_file)
-
-def save_human_readable_config(args, mfcc_kwargs, config_file):
-    '''
-    logs config of the model to a human readable format
-
-    params:
-        args - arguments of the model
-        config_file - file to write the config to
-    '''
-    print('******************', file=config_file)
-    print(f'Model {args.model_name} config:', file=config_file)
-    print('\tModel: ', args.model, file=config_file)
-    print('\tLatent dimension: ', args.latent_dim, file=config_file)
-    print('\tEpochs: ', args.epochs, file=config_file)
-    print('\tBatch size: ', args.batch_size, file=config_file)
-    print('\tSample groups: ', args.sample_group, file=config_file)
-    print('\tPad or trim length: ', args.pad_or_trim_length, file=config_file)
-
-    print('******************', file=config_file)
-    if args.noise:
-        print('Noise:', file=config_file)
-        print('\tNoise distribution: ', args.distribution, file=config_file)
-        print('\tNoise operation: ', args.operation, file=config_file)
-        print('\tNoise scope: ', args.scope, file=config_file)
-        print('\tNoise variance: ', args.variance, file=config_file)
-        print('\tNoise mean: ', args.mean, file=config_file)
-    else:
-        print('Noise: None', file=config_file)
-
-
-    print('******************', file=config_file)
-    print(f'Date and time: {datetime.now().strftime("%d/%h/%Y %H:%M")}', file=config_file)
-    print('******************', file=config_file)
-    print('MFCC conversion kwargs:', file=config_file)
-    print(f'\tMFCC kwargs: {mfcc_kwargs}', file=config_file)
-    print('******************', file=config_file)
-    print('machine readable config saved also to .pkl file')
 
 def load_config(path):
-    # return pkl.load(open(path, 'rb'))
-    return json.load(open(path, 'r'))
+    '''
+    loads the config of the model from a json file
+
+    params:
+        path - path to the directory where to save the config
+    '''
+    with open(path, 'r') as config_file:
+        json_str = config_file.read()
+    
+    return Config.fromJson(json_str)

@@ -33,10 +33,8 @@ MFCC_KWARGS = {
     'n_mels': 256,
     'fmin': 0.0,
     'fmax': None,
-    'htk': False,
-    'dtype': np.float32
+    'htk': False
     }
-
 
 
 def pad_or_trim(mfcc, length):
