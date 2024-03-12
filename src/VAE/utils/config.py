@@ -17,6 +17,8 @@ import torch.nn.functional as F
 import argparse
 
 import pickle as pkl
+import json
+
 from datetime import datetime
 
 class Config():
@@ -90,10 +92,12 @@ def save_config(path, args, mfcc_kwargs):
                     mfcc_kwargs=mfcc_kwargs,
                     pad_or_trim_length=args.pad_or_trim_length)
 
-    pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
+    # pkl.dump(config, open(os.path.join(path, f'{args.model_name}_config.pkl'), 'wb'))
 
-    with open(os.path.join(path, f'{args.model_name}_config.txt'), 'w') as config_file:
-        save_human_readable_config(args, mfcc_kwargs, config_file)
+    json.dump(config, open(os.path.join(path, f'{args.model_name}_config.json'), 'w'))
+
+    # with open(os.path.join(path, f'{args.model_name}_config.txt'), 'w') as config_file:
+    #     save_human_readable_config(args, mfcc_kwargs, config_file)
 
 def save_human_readable_config(args, mfcc_kwargs, config_file):
     '''
@@ -133,4 +137,5 @@ def save_human_readable_config(args, mfcc_kwargs, config_file):
     print('machine readable config saved also to .pkl file')
 
 def load_config(path):
-    return pkl.load(open(path, 'rb'))
+    # return pkl.load(open(path, 'rb'))
+    return json.load(open(path, 'r'))
