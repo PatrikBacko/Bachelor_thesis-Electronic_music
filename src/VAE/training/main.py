@@ -9,13 +9,14 @@ import torch
 
 import matplotlib.pyplot as plt
 
-from src.VAE.models.VAE_1 import VAE_1
-from src.VAE.models.VAE_2 import VAE_2
-
 from src.VAE.training.train_model import train
 from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
+
+from src.VAE.models.load_model import load_model
+
+import datetime
 
 import argparse
 
@@ -73,26 +74,16 @@ def build_arguments():
 
     return parser.parse_args()
 
-def choose_model(model_type, latent_dim):
-    '''
-    Returns the VAE model based on the model_type
-    
-    parameters:
-        model_type: str, type of the model
-        latent_dim: int, latent dimension of the model
-
-    returns:
-        model: torch.nn.Module, model of the VAE
-    '''
-    if model_type == 'VAE_1':
-        return VAE_1(latent_dim)
-    elif model_type == 'VAE_2':
-        return VAE_2(latent_dim)
 
 def main(args):
+    #start timer
+    start = datetime.datetime.now()
+
+    #create output directory
     if not os.path.exists(args.output_path):
         os.mkdir(args.output_path)
 
+    #create log file
     with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w') as log_file: 
         
         #choose sample groups
@@ -110,7 +101,7 @@ def main(args):
         print(f'Device : {device}\n', file=log_file)
 
         #create model
-        model = choose_model(args.model, args.latent_dim).to(device)
+        model = load_model(args.model, args.latent_dim).to(device)
         print(f'Model {args.model_name} created. (model type: {args.model})\n', file=log_file)
 
         #noise function
@@ -144,6 +135,10 @@ def main(args):
 
         # save config
         save_config(args.output_path, args, MFCC_KWARGS)
+
+        #end timer
+        end = datetime.datetime.now()
+        print(f'Training finished in {end-start}', file=log_file)
 
 
 if __name__ == '__main__':
