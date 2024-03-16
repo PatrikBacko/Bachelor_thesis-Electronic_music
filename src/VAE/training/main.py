@@ -7,6 +7,11 @@ import os
 
 import torch
 
+
+import sys
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+
+
 import matplotlib.pyplot as plt
 
 from src.VAE.training.train_model import train
@@ -31,41 +36,41 @@ def build_arguments():
     parser.add_argument('data_dir', type=str, help='Required, Path to directory with samples.')
     parser.add_argument('output_path', type=str, help='Required, Path to directory where to save the model and logs etc.')
     parser.add_argument('--model_name', type=str, help='Required, Name of the log file.')
+    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2'], help='Model to train.')
 
     #optional arguments
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'
-                                                            'If used, only the specified sample groups will be used for training.'
+                                                            'If used, only the specified sample groups will be used for training. (default is all)'
                                                             'possible groups: kick, clap, hat, snare, tom, cymbal, crash, ride')
-    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2'], help='Model to train.')
-    parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model.')
-    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model.')
+    parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model. (default is 32)')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model. (default is 100)')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model. (default is 32)')
     parser.add_argument('--pad_or_trim_length', type=int, default=112, help='Length of the spectogram to be trimmed or padded to. '
                                                                 '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
 
 
     #Noise arguments
-    parser.add_argument('-n','--noise', action='store_true', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
-                        'if this switch is not used, other arguments will be ignored.\n')
+    parser.add_argument('-n','--noise', default='False', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
+                        'if this argument is False, other arguments will be ignored. (default is False)\n')
     
     #argument for noise variance
-    parser.add_argument("-v", "--variance", help="noise variance for generating distribution", type=float, default=0.0)
+    parser.add_argument("-v", "--variance", help="noise variance for generating distribution. (default is 0)", type=float, default=0.0)
     #argument for noise mean
-    parser.add_argument("-m", "--mean", help="noise mean for generating distribution", type=float, default=0.0)
+    parser.add_argument("-m", "--mean", help="noise mean for generating distribution (default is 0)", type=float, default=0.0)
 
     #argument for noise distribution type
-    parser.add_argument("-d", "--distribution", help="noise generating distribution"
+    parser.add_argument("-d", "--distribution", help="noise generating distribution. (default is constant)"
                         "normal: normal distribution"
                         "uniform: uniform distribution"
                         "constant: value is equal to the chosen mean"
                         , choices=NOISE_GENERATING_DISTS, default="constant")
     #argument for noise operation type
-    parser.add_argument("-o", "--operation", help="noise operation type (how will be noise added to the spectogram)"
+    parser.add_argument("-o", "--operation", help="noise operation type (how will be noise added to the spectogram). (default is additive)"
                         "additive: add noise to the spectogram"
                         "multiplicative: multiply the spectogram with noise (noise values are coefficients)"
                         , choices=NOISE_OPERATION_TYPES, default="additive")
     #argument for noise scope
-    parser.add_argument("-s", "--scope", help="noise scope."
+    parser.add_argument("-s", "--scope", help="noise scope. (default is pixel)"
                         "pixel: add noise to each pixel in the spectogram"
                         "column: each column in the spectogram will have the same noise, but different from other columns"
                         "row: each row in the spectogram will have the same noise, but different from other rows"
