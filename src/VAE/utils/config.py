@@ -65,14 +65,14 @@ class Config():
 
         self.mfcc_kwargs = mfcc_kwargs
 
-    def toJson(self):
+    def to_json(self):
         config_dict = self.__dict__
         config_dict['date_time'] = self.date_time.strftime("%d/%m/%Y %H:%M")
 
         return json.dumps(config_dict)
     
     @staticmethod
-    def fromJson(json_str):
+    def from_json(json_str):
         config_dict = json.loads(json_str)
 
         config  = Config()
@@ -87,14 +87,7 @@ class Config():
 
         config.date_time = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
 
-        if config_dict['noise']:
-            config.noise = {
-                'variance': config_dict['variance'],
-                'mean': config_dict['mean'],
-                'distribution': config_dict['distribution'],
-                'operation': config_dict['operation'],
-                'scope': config_dict['scope']
-            }
+        config.noise = config_dict['noise'] if config_dict['noise'] else None
 
         config.mfcc_kwargs = config_dict['mfcc_kwargs']
 
@@ -128,7 +121,7 @@ def save_config(path, args, mfcc_kwargs):
                     pad_or_trim_length=args.pad_or_trim_length)
 
     with open(os.path.join(path, f'{args.model_name}_config.json'), 'w') as config_file:
-        config_file.write(config.toJson())
+        config_file.write(config.to_json())
 
 
 def load_config(path):
@@ -141,4 +134,4 @@ def load_config(path):
     with open(path, 'r') as config_file:
         json_str = config_file.read()
     
-    return Config.fromJson(json_str)
+    return Config.from_json(json_str)

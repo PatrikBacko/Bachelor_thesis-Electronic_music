@@ -7,6 +7,11 @@ usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional ar
 import math
 import os
 
+### DEBUG ###
+import sys
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+###
+
 import numpy as np
 import librosa as lb
 import soundfile as sf
@@ -16,7 +21,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import matplotlib.pyplot as plt
+
 from src.VAE.models.VAE_1 import VAE_1
+from src.VAE.models.VAE_2 import VAE_2
+
 from src.VAE.training.train_model import train
 from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
 
@@ -43,12 +52,12 @@ def build_arguments():
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'
                                                             'If used, only the specified sample groups will be used for training.'
                                                             'possible groups: kick, clap, hat, snare, tom, cymbal, crash, ride')
-    parser.add_argument('--model', type=str, default='VAE_1',help='Model to train.')
+    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2'], help='Model to train.')
     parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model.')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model.')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model.')
-    parser.add_argument('--pad_or_trim_length', type=int, default=100, help='Length of the spectogram to be trimmed or padded to. '
-                                                                '(default is 100, With the current settings of mfcc conversion, it is around 1 seconds of audio)')
+    parser.add_argument('--pad_or_trim_length', type=int, default=112, help='Length of the spectogram to be trimmed or padded to. '
+                                                                '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
 
 
     #Noise arguments
@@ -81,6 +90,21 @@ def build_arguments():
 
     return parser.parse_args()
 
+def choose_model(model_type, latent_dim):
+    '''
+    Returns the VAE model based on the model_type
+    
+    parameters:
+        model_type: str, type of the model
+        latent_dim: int, latent dimension of the model
+
+    returns:
+        model: torch.nn.Module, model of the VAE
+    '''
+    if model_type == 'VAE_1':
+        return VAE_1(latent_dim)
+    elif model_type == 'VAE_2':
+        return VAE_2(latent_dim)
 
 def main(args):
     if not os.path.exists(args.output_path):
@@ -88,19 +112,25 @@ def main(args):
 
     with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w') as log_file: 
         
+        #choose sample groups
         if args.sample_group == 'all':
             sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride']
         else:
             sample_groups = args.sample_group.split(',')
+
+        #prepare data loader
         train_loader = prepare_data(args.data_dir, sample_groups, length=args.pad_or_trim_length, batch_size=args.batch_size)
         print(f'Data prepared for training. Sample groups: {", ".join(sample_groups)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
 
+        #device
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         print(f'Device : {device}\n', file=log_file)
 
-        model = VAE_1(args.latent_dim).to(device)
+        #create model
+        model = choose_model(args.model, args.latent_dim).to(device)
         print(f'Model {args.model_name} created. (model type: {args.model})\n', file=log_file)
 
+        #noise function
         if args.noise:
             noise_function = generate_noise(args.mean, args.variance, args.distribution, args.scope, args.operation)
             print(f'Noise function created with config: \n'
@@ -113,15 +143,23 @@ def main(args):
         else:
             noise_function = lambda x:x
             print('No noise added to the spectograms.\n', file=log_file)
-        
-        ##TODO: implement different models ??
-
+                    
+        #train the model
         losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function)
 
+        #save model
         torch.save(model.state_dict(), os.path.join(args.output_path, f'model_{args.model_name}.pkl'))
         print(f'Model saved to {args.output_path}', file=log_file)
 
+        #plot the losses
+        plt.plot(losses)
+        plt.title('Train loss in each epoch')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
 
+        plt.savefig(os.path.join(args.output_path, f'{args.model_name}_train-loss.png'))
+
+        # save config
         save_config(args.output_path, args, MFCC_KWARGS)
 
 

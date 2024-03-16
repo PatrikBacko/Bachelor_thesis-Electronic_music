@@ -56,13 +56,13 @@ def pad_or_trim(mfcc, length):
         padding = np.repeat(last_column, length - mfcc.shape[1], axis=1)
         return np.concatenate((mfcc, padding), axis=1)
     
-def pad_or_trim_list(mfccs, length = 100):
+def pad_or_trim_list(mfccs, length):
     '''
-    pads or trims list of mfccs to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
+    pads or trims list of mfccs to given length
 
     params:
         mfccs - list of mfccs to pad or trim
-        length - length to pad or trim to (default is 100)
+        length - length to pad or trim to
 
     returns:    
         mfccs - list of padded or trimmed mfccs
@@ -120,16 +120,16 @@ def convert_to_mfcc(waves):
             mfcc = lb.feature.mfcc(y=wave, sr=sr, **MFCC_KWARGS)
 
             mfccs.append(mfcc)
-    return mfccs
+            return mfccs
 
-def return_data_loader(mfccs_list, batch_size = 32):
+def return_data_loader(mfccs_list, batch_size):
     '''
     gets list of mfccs, and returns a torch dataloader with them
 
     params:
         mfccs_list - list of mfccs
         log_file - file to log the process
-        batch_size - batch size for the dataloader (default is 32)
+        batch_size - batch size for the dataloader
 
     returns:
         train_loader - dataloader with mfccs
@@ -140,14 +140,14 @@ def return_data_loader(mfccs_list, batch_size = 32):
 
     return train_loader
 
-def prepare_data(data_dir, sample_groups_list, length = 100, batch_size = 32):
+def prepare_data(data_dir, sample_groups_list, length, batch_size):
     '''prepares the data for training
 
     params:
         source_dir - path to directory with samples
         log_file - file to log the process
-        length - length to pad or trim to (default is 100)
-        batch_size - batch size for the dataloader (default is 32)
+        length - length to pad or trim to
+        batch_size - batch size for the dataloader
 
     returns:
         train_loader - dataloader with padded or trimmed mfccs of the samples
