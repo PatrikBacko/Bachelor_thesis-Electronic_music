@@ -1,5 +1,5 @@
 from src.VAE.models.VAE_1 import VAE_1
-from src.VAE.models.VAE_1 import VAE_2
+from src.VAE.models.VAE_2 import VAE_2
 
 def load_model(model, **model_kwargs):
     '''
