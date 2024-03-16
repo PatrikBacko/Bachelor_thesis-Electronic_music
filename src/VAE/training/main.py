@@ -93,7 +93,7 @@ def main(args):
         
         #choose sample groups
         if args.sample_group == 'all':
-            sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride']
+            sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride', 'other']
         else:
             sample_groups = args.sample_group.split(',')
 
