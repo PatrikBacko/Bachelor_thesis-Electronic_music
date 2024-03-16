@@ -15,8 +15,6 @@ import sklearn
 import sklearn.decomposition
 
 import matplotlib.pyplot as plt
-%matplotlib inline
-# %matplotlib notebook
 
 from models.VAE_1 import VAE_1
 from utils.prepare_data import pad_or_trim

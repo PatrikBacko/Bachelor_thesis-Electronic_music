@@ -3,23 +3,9 @@
 Script for training the model (Variational Autoencoder) on given samples and saving it.
 usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional args] 
 '''
-
-import math
 import os
 
-### DEBUG ###
-import sys
-sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
-###
-
-import numpy as np
-import librosa as lb
-import soundfile as sf
-import pyaudio
-
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 
 import matplotlib.pyplot as plt
 
@@ -28,13 +14,10 @@ from src.VAE.models.VAE_2 import VAE_2
 
 from src.VAE.training.train_model import train
 from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
-
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
-
 from src.VAE.utils.config import save_config
 
 import argparse
-
 
 def build_arguments():
     '''

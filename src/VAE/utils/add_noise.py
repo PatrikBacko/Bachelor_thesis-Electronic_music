@@ -1,4 +1,3 @@
-import torch
 import numpy as np
 
 NOISE_GENERATING_DISTS = ["normal", "uniform", "constant"]

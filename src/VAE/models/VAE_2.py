@@ -6,7 +6,6 @@ import torch.nn.functional as F
 
 #TODO: CCA 10 vrstiev, kazde 3-4 vrstvy zmensieniwe, inac nezmensovat 
 
-
 class Encoder(nn.Module):
     def __init__(self, latent_dim):
         super(Encoder, self).__init__()

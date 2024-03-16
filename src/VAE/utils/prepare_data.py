@@ -1,18 +1,10 @@
 #!/usr/bin/env python3
-
-import math
 import os
 
 import numpy as np
 import librosa as lb
-# import soundfile as sf
-# import pyaudio
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-import argparse
 
 MFCC_KWARGS = {
     'n_mfcc': 512,
