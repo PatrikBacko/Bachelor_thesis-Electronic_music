@@ -47,7 +47,6 @@ def build_arguments():
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model. (default is 32)')
     parser.add_argument('--pad_or_trim_length', type=int, default=112, help='Length of the spectogram to be trimmed or padded to. '
                                                                 '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
-#
 
     #Noise arguments
     parser.add_argument('-n','--noise', default='False', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
