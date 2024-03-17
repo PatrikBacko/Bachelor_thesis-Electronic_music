@@ -108,11 +108,10 @@ def convert_to_mfcc(waves):
     mfccs = []
 
     for wave, sr in waves:
-            #TODO: MFCC **kwargs to be set in the config file, or at least in constant in this script
-            mfcc = lb.feature.mfcc(y=wave, sr=sr, **MFCC_KWARGS)
+        mfcc = lb.feature.mfcc(y=wave, sr=sr, **MFCC_KWARGS)
 
-            mfccs.append(mfcc)
-            return mfccs
+        mfccs.append(mfcc)
+    return mfccs
 
 def return_data_loader(mfccs_list, batch_size):
     '''
