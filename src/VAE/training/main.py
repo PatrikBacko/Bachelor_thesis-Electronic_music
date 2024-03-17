@@ -11,7 +11,7 @@ import torch
 # import sys
 # sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
-#
+
 import matplotlib.pyplot as plt
 
 from src.VAE.training.train_model import train
@@ -24,7 +24,6 @@ from src.VAE.models.load_model import load_model
 import datetime
 
 import argparse
-
 def build_arguments():
     '''
     builds arguments for the script
