@@ -84,6 +84,8 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
 
         average_loss = train_loss / len(train_loader.dataset)
         print('====> Epoch: {} Average loss: {:.4f}'.format(epoch+1, average_loss), file=log_file)
+        log_file.flush()
+        
         losses.append(average_loss)
     print('Finished training.', file=log_file) 
 
