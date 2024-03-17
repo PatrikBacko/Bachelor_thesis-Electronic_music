@@ -89,7 +89,7 @@ def main(args):
         os.mkdir(args.output_path)
 
     #create log file
-    with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'w') as log_file: 
+    with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'a+') as log_file: 
         
         #choose sample groups
         if args.sample_group == 'all':
