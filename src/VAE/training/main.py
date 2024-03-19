@@ -35,7 +35,7 @@ def build_arguments():
     parser.add_argument('data_dir', type=str, help='Required, Path to directory with samples.')
     parser.add_argument('output_path', type=str, help='Required, Path to directory where to save the model and logs etc.')
     parser.add_argument('--model_name', type=str, help='Required, Name of the log file.')
-    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2'], help='Model to train.')
+    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2', 'VAE_3'], help='Model to train.')
 
     #optional arguments
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'

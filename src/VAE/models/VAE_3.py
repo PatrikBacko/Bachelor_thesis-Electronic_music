@@ -38,7 +38,7 @@ class Encoder(nn.Module):
 
         #TODO: maybe try to get rid of this block with some tricks as in resne, it could reduce the number of parameters
         self.block_fc = nn.Sequential(
-            nn.Linear(16 * 32 * 14, latent_dim),
+            nn.Linear(32 * 32 * 14, latent_dim),
             nn.ReLU()
         )
 
