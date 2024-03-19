@@ -18,7 +18,7 @@ def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
     returns:
         loss - loss of the model
     '''
-    reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='sum') #mse for simplicity, could change in the future
+    reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='mean') #mse for simplicity, could change in the future
     kl_divergence = - 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
     return (reconstruction_loss + kl_regularisation * kl_divergence)
@@ -84,7 +84,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
             train_loss += loss.item()
             optimizer.step()
 
-        average_loss = train_loss / len(train_loader.dataset)
+        average_loss = train_loss / len(train_loader.dataset) * train_loader.batch_size
         print('====> Epoch: {} Average loss: {:.4f}'.format(epoch+1, average_loss), file=log_file)
         log_file.flush()
         
