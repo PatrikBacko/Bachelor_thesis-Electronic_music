@@ -1,5 +1,6 @@
 from src.VAE.models.VAE_1 import VAE_1
 from src.VAE.models.VAE_2 import VAE_2
+from src.VAE.models.VAE_3 import VAE_3
 
 def load_model(model, latent_dim):
     '''
@@ -16,3 +17,5 @@ def load_model(model, latent_dim):
         return VAE_1(latent_dim)
     elif model == 'VAE_2':
         return VAE_2(latent_dim)
+    elif model == 'VAE_3':
+        return VAE_3(latent_dim)
