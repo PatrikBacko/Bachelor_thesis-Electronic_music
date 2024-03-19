@@ -47,6 +47,9 @@ def build_arguments():
     parser.add_argument('--pad_or_trim_length', type=int, default=112, help='Length of the spectogram to be trimmed or padded to. '
                                                                 '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
 
+    parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
+    
+    
     #Noise arguments
     parser.add_argument('-n','--noise', default='False', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
                         'if this argument is False, other arguments will be ignored. (default is False)\n')
@@ -122,7 +125,7 @@ def main(args):
             print('No noise added to the spectograms.\n', file=log_file)
                     
         #train the model
-        losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function)
+        losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation)
 
         #save model
         torch.save(model.state_dict(), os.path.join(args.output_path, f'model_{args.model_name}.pkl'))

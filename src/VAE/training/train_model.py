@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-def loss_function(reconstructed_x, x, mu, logvar):
+def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
     '''
     loss function for VAE with MSE loss as reconstruction loss and KL divergence (makes autoencoder variational)
 
@@ -13,6 +13,7 @@ def loss_function(reconstructed_x, x, mu, logvar):
         x - original x
         mu - mean
         logvar - log variance
+        kl_regularisation - kl divergence regularisation
 
     returns:
         loss - loss of the model
@@ -24,7 +25,7 @@ def loss_function(reconstructed_x, x, mu, logvar):
     print('KL divergence: ', kl_divergence)
     print('Total loss: ', reconstruction_loss + kl_divergence)
 
-    return (reconstruction_loss + kl_divergence)
+    return (reconstruction_loss + kl_regularisation * kl_divergence)
 
 def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.tensor:
     '''
@@ -48,7 +49,7 @@ def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.t
 
 
 
-def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x):
+def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x, kl_regularisation=1.0):
     '''
     trains the model
 
@@ -82,7 +83,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
             optimizer.zero_grad()
             reconstructed_x, mu, logvar = model(noised_x)
 
-            loss = loss_function(reconstructed_x, x, mu, logvar)
+            loss = loss_function(reconstructed_x, x, mu, logvar, kl_regularisation)
             loss.backward()
             train_loss += loss.item()
             optimizer.step()

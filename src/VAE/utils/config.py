@@ -25,7 +25,8 @@ class Config():
                 scope='pixel', 
                 date_time= None, 
                 mfcc_kwargs=None, 
-                pad_or_trim_length=None):
+                pad_or_trim_length=None,
+                kl_regularisation=1.0):
         
         self.model_name = model_name
         self.sample_group = sample_group
@@ -34,6 +35,7 @@ class Config():
         self.epochs = epochs
         self.batch_size = batch_size
         self.pad_or_trim_length = pad_or_trim_length
+        self.kl_regularisation = kl_regularisation
 
         self.date_time = date_time
 
@@ -69,6 +71,7 @@ class Config():
         config.epochs = config_dict['epochs']
         config.batch_size = config_dict['batch_size']
         config.pad_or_trim_length = config_dict['pad_or_trim_length']
+        config.kl_regularisation = config_dict['kl_regularisation']
 
         config.date_time = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
 
@@ -103,7 +106,8 @@ def save_config(path, args, mfcc_kwargs):
                     scope=args.scope, 
                     date_time=datetime.now(), 
                     mfcc_kwargs=mfcc_kwargs,
-                    pad_or_trim_length=args.pad_or_trim_length)
+                    pad_or_trim_length=args.pad_or_trim_length,
+                    kl_regularisation=args.kl_regularisation)
 
     with open(os.path.join(path, f'{args.model_name}_config.json'), 'w') as config_file:
         config_file.write(config.to_json())
