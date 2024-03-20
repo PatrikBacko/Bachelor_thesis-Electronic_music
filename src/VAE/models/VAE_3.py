@@ -100,7 +100,6 @@ class Decoder(nn.Module):
 
         self.block_0 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=5, stride=2, padding=2, output_padding=1),
-            nn.ReLU()
         )
 
     def forward(self, x):
