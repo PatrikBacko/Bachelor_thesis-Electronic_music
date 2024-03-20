@@ -19,9 +19,9 @@ def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
         loss - loss of the model
     '''
     reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='mean') #mse for simplicity, could change in the future
-    kl_divergence = - 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
+    kl_divergence = kl_regularisation * (- 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp()))
 
-    return (reconstruction_loss + kl_regularisation * kl_divergence, reconstruction_loss, kl_divergence)
+    return (reconstruction_loss + kl_divergence, reconstruction_loss, kl_divergence)
     # return (reconstruction_loss + kl_regularisation * kl_divergence)
 
 def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.tensor:
