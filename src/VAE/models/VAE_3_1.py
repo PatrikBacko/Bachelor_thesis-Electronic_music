@@ -100,7 +100,6 @@ class Decoder(nn.Module):
 
         self.block_0 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=5, stride=2, padding=2, output_padding=1),
-            nn.ReLU()
         )
 
     def forward(self, x):
@@ -116,9 +115,9 @@ class Decoder(nn.Module):
         return x
 
 
-class VAE_3(nn.Module):
+class VAE_3_1(nn.Module):
     def __init__(self, latent_dim):
-        super(VAE_3, self).__init__()
+        super(VAE_3_1, self).__init__()
         self.encoder = Encoder(latent_dim)
         self.decoder = Decoder(latent_dim)
 
