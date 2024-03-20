@@ -19,12 +19,15 @@ from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
 
-from src.VAE.models.load_model import load_model
+from src.VAE.models.load_model import create_model
 
 import datetime
 
 import argparse
-def build_arguments():
+
+from typing import Sequence
+
+def parse_arguments():
     '''
     builds arguments for the script
     '''
@@ -78,10 +81,13 @@ def build_arguments():
                         "entire_picture: the entire spectogram will have the same noise"
                         , choices=NOISE_SCOPE, default="pixel")
 
-    return parser.parse_args()
+    return parser
 
 
-def main(args):
+def main(argv: Sequence[str] | None =None) -> None:
+    parser = parse_arguments()
+    args = parser.parse_args(argv)
+
     #start timer
     start = datetime.datetime.now()
 
@@ -107,7 +113,7 @@ def main(args):
         print(f'Device : {device}\n', file=log_file)
 
         #create model
-        model = load_model(args.model, args.latent_dim).to(device)
+        model = create_model(args.model, args.latent_dim).to(device)
         print(f'Model {args.model_name} created. (model type: {args.model})\n', file=log_file)
 
         #noise function
@@ -148,5 +154,4 @@ def main(args):
 
 
 if __name__ == '__main__':
-    args = build_arguments()
-    main(args)
+    main()
