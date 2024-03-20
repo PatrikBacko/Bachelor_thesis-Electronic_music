@@ -21,7 +21,8 @@ def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
     reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='mean') #mse for simplicity, could change in the future
     kl_divergence = - 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
 
-    return (reconstruction_loss + kl_regularisation * kl_divergence)
+    return (reconstruction_loss + kl_regularisation * kl_divergence, reconstruction_loss, kl_divergence)
+    # return (reconstruction_loss + kl_regularisation * kl_divergence)
 
 def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.tensor:
     '''
@@ -70,6 +71,10 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
 
     for epoch in range(epochs):
         train_loss = 0
+        #
+        rec_loss = 0
+        kl_loss = 0
+        #
         for batch_idx, x in enumerate(train_loader):
             noised_x = noise_function(x)
             
@@ -79,13 +84,22 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
             optimizer.zero_grad()
             reconstructed_x, mu, logvar = model(noised_x)
 
-            loss = loss_function(reconstructed_x, x, mu, logvar, kl_regularisation)
+            # loss = loss_function(reconstructed_x, x, mu, logvar, kl_regularisation)
+            loss, reconstruction_loss, kl_divergence = loss_function(reconstructed_x, x, mu, logvar, kl_regularisation)
+
             loss.backward()
             train_loss += loss.item()
+            #
+            rec_loss += reconstruction_loss.item()
+            kl_loss += kl_divergence.item()
+            #
             optimizer.step()
 
         average_loss = train_loss / len(train_loader.dataset) * train_loader.batch_size
         print('====> Epoch: {} Average loss: {:.4f}'.format(epoch+1, average_loss), file=log_file)
+        print('(Debug) ====> Reconstruction loss: {:.4f}'.format(rec_loss / len(train_loader.dataset) * train_loader.batch_size), file=log_file)
+        print('(Debug) ====> KL divergence: {:.4f}'.format(kl_loss / len(train_loader.dataset) * train_loader.batch_size), file=log_file)
+
         log_file.flush()
         
         losses.append(average_loss)
