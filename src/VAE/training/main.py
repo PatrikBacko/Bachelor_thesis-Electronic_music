@@ -15,7 +15,8 @@ sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electron
 import matplotlib.pyplot as plt
 
 from src.VAE.training.train_model import train
-from src.VAE.utils.prepare_data import prepare_data, MFCC_KWARGS
+from src.VAE.utils.data import MFCC_KWARGS
+from src.VAE.utils.prepare_data_train import prepare_train_loader
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
 
@@ -83,6 +84,17 @@ def parse_arguments():
 
     return parser
 
+def plot_losses(losses, output_path):
+    '''
+    Plots the losses of the model during training and saves it to the output_path
+    '''
+    plt.plot(losses)
+    plt.title('Train loss in each epoch')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+
+    plt.savefig(os.path.join(output_path, 'train-loss.png'))
+
 
 def main(argv: Sequence[str] | None =None) -> None:
     parser = parse_arguments()
@@ -96,17 +108,17 @@ def main(argv: Sequence[str] | None =None) -> None:
         os.mkdir(args.output_path)
 
     #create log file
-    with open(os.path.join(args.output_path, f'{args.model_name}_training.log'), 'a+') as log_file: 
+    with open(os.path.join(args.output_path, f'training.log'), 'a+') as log_file: 
         
         #choose sample groups
         if args.sample_group == 'all':
-            sample_groups = ['kick', 'clap', 'hat', 'snare', 'tom', 'cymbal', 'crash', 'ride', 'other']
+            args.sample_group = os.listdir(args.data_dir)
         else:
-            sample_groups = args.sample_group.split(',')
+            args.sample_group = args.sample_group.split(',')
 
         #prepare data loader
-        train_loader = prepare_data(args.data_dir, sample_groups, length=args.pad_or_trim_length, batch_size=args.batch_size)
-        print(f'Data prepared for training. Sample groups: {", ".join(sample_groups)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
+        train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size)
+        print(f'Data prepared for training. Sample groups: {", ".join(args.sample_group)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
 
         #device
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -134,16 +146,10 @@ def main(argv: Sequence[str] | None =None) -> None:
         losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation)
 
         #save model
-        torch.save(model.state_dict(), os.path.join(args.output_path, f'model_{args.model_name}.pkl'))
+        torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))
         print(f'Model saved to {args.output_path}', file=log_file)
 
-        #plot the losses
-        plt.plot(losses)
-        plt.title('Train loss in each epoch')
-        plt.xlabel('Epoch')
-        plt.ylabel('Loss')
-
-        plt.savefig(os.path.join(args.output_path, f'{args.model_name}_train-loss.png'))
+        plot_losses(losses, args.output_path)
 
         # save config
         save_config(args.output_path, args, MFCC_KWARGS)

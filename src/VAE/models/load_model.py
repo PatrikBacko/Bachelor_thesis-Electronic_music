@@ -23,7 +23,7 @@ def create_model(model, latent_dim):
         return VAE_3(latent_dim)
     
 
-def load_model(model_path, model, latend_dim):
+def load_model(model_path, model_type, latend_dim, device='cpu'):
     '''
     Loads the model from the model_path
     
@@ -35,6 +35,6 @@ def load_model(model_path, model, latend_dim):
     returns:
         model: torch.nn.Module, model of the VAE
     '''
-    model = create_model(model, latend_dim)
-    model.load_state_dict(torch.load(model_path))
-    return model
+    model_type = create_model(model_type, latend_dim)
+    model_type.load_state_dict(torch.load(model_path), map_location=torch.device(device))
+    return model_type

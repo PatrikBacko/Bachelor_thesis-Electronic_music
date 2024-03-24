@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 import numpy as np
 import librosa as lb
@@ -19,14 +18,17 @@ import matplotlib.pyplot as plt
 from models.VAE_1 import VAE_1
 from utils.prepare_data import pad_or_trim
 
+
+
+
+
+
 from utils.config import load_config
-
-
-
-
-
 from models.load_model import load_model
 
+
+
+from pathlib import Path
 from typing import Sequence
 
 import argparse
@@ -34,20 +36,23 @@ import argparse
 def parse_arguments():
     parser = argparse.ArgumentParser(description=__doc__)
 
-    parser.add_argument('model_path', type=str, help='Path to the model to evaluate.')
+    parser.add_argument('model_dir_path', type=str, help='Path to directory of the model to evaluate.')
 
     return parser
 
 
-
-
-
-def main(argv: Sequence[str] | None =None) -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     parser = parse_arguments()
     args = parser.parse_args(argv)
 
-    config = load_config(args.model_path)
-    model = load_model(args.model_path, config.model, config.latent_dim)
+    model_dir_path = Path(args.model_dir_path)
+
+
+    config = load_config(model_dir_path / 'config.json')
+    model = load_model(model_dir_path / 'model.pkl', config.model, config.latent_dim)
+
+
+
 
 
 

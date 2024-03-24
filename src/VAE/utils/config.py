@@ -109,7 +109,7 @@ def save_config(path, args, mfcc_kwargs):
                     pad_or_trim_length=args.pad_or_trim_length,
                     kl_regularisation=args.kl_regularisation)
 
-    with open(os.path.join(path, f'{args.model_name}_config.json'), 'w') as config_file:
+    with open(os.path.join(path, f'config.json'), 'w') as config_file:
         config_file.write(config.to_json())
 
 
