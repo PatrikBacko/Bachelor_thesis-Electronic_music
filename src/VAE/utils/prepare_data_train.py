@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import os
 
-from data import load_wave, convert_to_mfcc, pad_or_trim
+from src.VAE.utils.data import load_wave, convert_to_mfcc, pad_or_trim
 
 def get_paths_to_samples(data_dir, sample_groups_list):
     '''
