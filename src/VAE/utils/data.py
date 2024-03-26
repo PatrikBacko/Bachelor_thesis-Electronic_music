@@ -89,7 +89,7 @@ def trim_wave(wave, sr, length):
         return wave[:np.round(sr * length)]
     else:
         return wave
-
+    
 
 def pad_or_trim(mfcc, length):
     '''

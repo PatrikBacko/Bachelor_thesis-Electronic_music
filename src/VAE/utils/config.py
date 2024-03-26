@@ -60,26 +60,14 @@ class Config():
     
     @staticmethod
     def from_json(json_str):
-        config_dict = json.loads(json_str)
+        def object_hook(d):
+            if 'date_time' in d:
+                d['date_time'] = datetime.strptime(d['date_time'], "%d/%m/%Y %H:%M")
+            if 'noise' in d and d['noise'] is None:
+                d['noise'] = None
+            return Config(**d)
 
-        config  = Config()
-
-        config.model_name = config_dict['model_name']
-        config.sample_group = config_dict['sample_group']
-        config.model = config_dict['model']
-        config.latent_dim = config_dict['latent_dim']
-        config.epochs = config_dict['epochs']
-        config.batch_size = config_dict['batch_size']
-        config.pad_or_trim_length = config_dict['pad_or_trim_length']
-        config.kl_regularisation = config_dict['kl_regularisation']
-
-        config.date_time = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
-
-        config.noise = config_dict['noise'] if config_dict['noise'] else None
-
-        config.mfcc_kwargs = config_dict['mfcc_kwargs']
-
-        return config
+        return json.loads(json_str, object_hook=object_hook)
 
 
 

@@ -53,3 +53,10 @@ class VAE_1(nn.Module):
         z = self.reparameterize(mu, logvar)
         reconstructed_x = self.decoder(z)
         return reconstructed_x, mu, logvar
+
+    def encode(self, x):
+        return self.encoder(x)
+    
+    def decode(self, z):
+        return self.decoder(z)
+        

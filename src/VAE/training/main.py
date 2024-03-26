@@ -112,7 +112,7 @@ def main(argv: Sequence[str] | None =None) -> None:
         
         #choose sample groups
         if args.sample_group == 'all':
-            args.sample_group = os.listdir(args.data_dir)
+            args.sample_group = [group for group in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, group))]
         else:
             args.sample_group = args.sample_group.split(',')
 
