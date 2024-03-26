@@ -84,14 +84,25 @@ def parse_arguments():
 
     return parser
 
-def plot_losses(losses, output_path):
+def plot_losses(losses_all, output_path):
     '''
     Plots the losses of the model during training and saves it to the output_path
+
+    params:
+        losses_all - list of losses (total loss, rec loss, kl loss) for each epoch
+        output_path - path to save the plot
     '''
-    plt.plot(losses)
+    losses = [loss[0] for loss in losses_all]
+    rec_losses = [loss[1] for loss in losses_all]
+    kl_losses = [loss[2] for loss in losses_all]
+
+    plt.plot(losses, label='total loss')
+    plt.plot(rec_losses, label='rec loss')
+    plt.plot(kl_losses, label='kl loss')
     plt.title('Train loss in each epoch')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
+    plt.legend()
 
     plt.savefig(os.path.join(output_path, 'train-loss.png'))
 
