@@ -98,7 +98,8 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
         print(f'===> Epoch: {epoch+1:4d}' +
               f'Total_loss: {average_loss:8.2f}' +
               f'Rec_loss: {(average_rec_loss):8.2f}' +
-              f'KL_div: {(average_kl_loss):8.2f}')
+              f'KL_div: {(average_kl_loss):8.2f}', 
+              file=log_file)
         log_file.flush()
         
         losses.append((average_loss, average_rec_loss, average_kl_loss))
