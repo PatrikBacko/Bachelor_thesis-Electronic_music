@@ -7,7 +7,6 @@ import sklearn
 
 
 from src.VAE.evaluation.pca_tsne import get_fitted_pca, get_fitted_tsne
-from src.VAE.evaluation.generate_means_logvars import load_means_logvars_dict
 
 cm = 1/2.54
 
@@ -96,3 +95,10 @@ def plot_pca_variance_ratio(means_logvars_dict, output_path):
     plt.ylabel('Explained variance ratio')
 
     plt.savefig(output_path / 'pca_variance_ratio.png')
+
+
+
+def make_plots(means_logvars_dict ,output_path):
+    plot_means_dist_hist(means_logvars_dict, output_path)
+    plot_3D_reduced_dims(means_logvars_dict, output_path)
+    plot_pca_variance_ratio(means_logvars_dict, output_path)

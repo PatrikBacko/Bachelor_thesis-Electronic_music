@@ -8,7 +8,7 @@ from datetime import datetime
 
 class Config():
     '''
-    class for logging the config of the model into a pkl file
+    class for logging the config of the model into a json file
     '''
     def __init__(self, 
                 model_name='', 
@@ -60,14 +60,13 @@ class Config():
     
     @staticmethod
     def from_json(json_str):
-        def object_hook(d):
-            if 'date_time' in d:
-                d['date_time'] = datetime.strptime(d['date_time'], "%d/%m/%Y %H:%M")
-            if 'noise' in d and d['noise'] is None:
-                d['noise'] = None
-            return Config(**d)
 
-        return json.loads(json_str, object_hook=object_hook)
+        config_dict = json.loads(json_str)
+
+        if config_dict['date_time'] is not None:
+            config_dict['date_time'] = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
+
+        return Config(**config_dict)
 
 
 

@@ -36,5 +36,5 @@ def load_model(model_path, model_type, latend_dim, device='cpu'):
         model: torch.nn.Module, model of the VAE
     '''
     model_type = create_model(model_type, latend_dim)
-    model_type.load_state_dict(torch.load(model_path), map_location=torch.device(device))
+    model_type.load_state_dict(torch.load(model_path, map_location=torch.device(device)))
     return model_type

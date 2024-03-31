@@ -82,16 +82,17 @@ def reconstruct_random_samples(model, config, output_path, n_samples, data_path,
     returns:
         None
     '''
-    for group in config.sample_groups:
+    for group in config.sample_group:
         for _ in range(n_samples):
-            wave, sr, wave_name = load_random_wave(data_path, group, seed)
-            reconstructed_wave = reconstruct_wave(wave, model, config)
+            wave, sr, wave_name = load_random_wave(data_path, group, seed=seed)
+            reconstructed_wave = reconstruct_wave(wave, sr, model, config)
 
             trimmed_wave = trim_wave(wave, sr, original_wave_trim_length)
+            wave_name = wave_name.replace('.wav', '')
 
             #TODO: not sure about the names of the waves
-            save_wave(trimmed_wave, sr, os.path.join(output_path, f'{wave_name}'))
-            save_wave(reconstructed_wave, sr, os.path.join(output_path, f'reconstructed_{wave_name}'))
+            save_wave(trimmed_wave, sr, os.path.join(output_path, f'{wave_name}_original.wav'))
+            save_wave(reconstructed_wave, sr, os.path.join(output_path, f'{wave_name}_reconstructed.wav'))
 
 
 def reconstruct_test_samples(model, config, output_path, data_path, original_wave_trim_length):
@@ -109,14 +110,14 @@ def reconstruct_test_samples(model, config, output_path, data_path, original_wav
         None
     '''
     data_path = Path(data_path)
-    for group in config.sample_groups:
+    for group in config.sample_group:
         path_to_group = data_path / group / f'{group}_test_samples'
 
         for sample_name in os.listdir(path_to_group):
             sample_path = path_to_group / sample_name
 
             wave, sr = load_wave(sample_path)
-            reconstructed_wave = reconstruct_wave(wave, model, config)
+            reconstructed_wave = reconstruct_wave(wave, sr, model, config)
 
             trimmed_wave = trim_wave(wave, sr, original_wave_trim_length)
 
@@ -131,5 +132,5 @@ def reconstruct_samples(model, config, output_path, data_path = 'data/drums-one_
 
     original_wave_trim_length = 1.5
 
-    reconstruct_random_samples(model, config, output_path / 'random', n_samples, data_path, original_wave_trim_length. seed)
+    reconstruct_random_samples(model, config, output_path / 'random', n_samples, data_path, original_wave_trim_length, seed)
     reconstruct_test_samples(model, config, output_path / 'test', data_path, original_wave_trim_length)

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import numpy as np
 import librosa as lb
-import torch
-
+import soundfile as sf
 
 MFCC_KWARGS = {
     'n_mfcc': 512,
@@ -86,7 +85,7 @@ def trim_wave(wave, sr, length):
     '''
     duration = wave.size / sr
     if duration > length:
-        return wave[:np.round(sr * length)]
+        return wave[:int(sr * length)]
     else:
         return wave
     
@@ -134,7 +133,7 @@ def save_wave(wave, sr, path_to_save):
         sr (int) - sample rate of the wave
         path_to_save (str) - path to save the wave
     '''
-    lb.output.write_wav(path_to_save, wave, sr)
+    sf.write(path_to_save, wave, sr, subtype='PCM_24')
     
 
 def convert_to_mfcc(wave, sr, mfcc_kwargs = MFCC_KWARGS):

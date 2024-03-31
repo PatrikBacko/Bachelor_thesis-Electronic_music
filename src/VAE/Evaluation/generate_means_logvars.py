@@ -27,6 +27,16 @@ def generate_and_save_means_and_logvars(model, config, output_path, data_path):
     '''
     generates means and logvars of all samples the model was trained on and saves them to a json file
 
+
+    params:
+        model (torch.nn.Module) - model to encode the samples with
+        config (utils.Config) - config of the model
+        output_path (str | Path) - path to the directory where to save the means and logvars
+        data_path (str | Path) - path to the directory with the samples
+
+    returns:
+        None
+
     json file structure:
     {
         'sample_group_1': [
@@ -47,15 +57,6 @@ def generate_and_save_means_and_logvars(model, config, output_path, data_path):
         ],
         ...
     }
-
-    params:
-        model (torch.nn.Module) - model to encode the samples with
-        config (utils.Config) - config of the model
-        output_path (str | Path) - path to the directory where to save the means and logvars
-        data_path (str | Path) - path to the directory with the samples
-
-    returns:
-        None
     '''
     data_path = Path(data_path)
     output_path = Path(output_path)
@@ -79,6 +80,13 @@ def load_means_logvars_json(path):
     '''
     loads name, sample_group, means and logvars of samples from a json file for further processing
 
+    params:
+        path (str | Path) - path to the json file
+
+    returns:
+        dict - dictionary with the loaded means and logvars
+
+
     json file structure:
     {
         'sample_group_1': [
@@ -100,11 +108,6 @@ def load_means_logvars_json(path):
         ...
     }
 
-    params:
-        path (str | Path) - path to the json file
-
-    returns:
-        dict - dictionary with the loaded means and logvars
     '''
 
 

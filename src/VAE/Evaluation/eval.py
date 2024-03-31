@@ -1,37 +1,19 @@
-import os
-
-import numpy as np
-import librosa as lb
-# import soundfile as sf
-# import pyaudio
-import sounddevice as sd
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-import sklearn
-import sklearn.decomposition
-
-import matplotlib.pyplot as plt
-
-from models.VAE_1 import VAE_1
-
-
-
-
-
-
-from utils.config import load_config
-from models.load_model import load_model
-from reconstruct_samples import reconstruct_samples
-from generate_means_logvars import generate_and_save_means_and_logvars
-
+import sys
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 from pathlib import Path
 from typing import Sequence
+import os
 
 import argparse
+
+
+from src.VAE.utils.config import load_config
+from src.VAE.models.load_model import load_model
+from src.VAE.evaluation.reconstruct_samples import reconstruct_samples
+from src.VAE.evaluation.generate_means_logvars import generate_and_save_means_and_logvars, load_means_logvars_json
+from src.VAE.evaluation.plots import make_plots
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -59,10 +41,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     # Job 2
     generate_and_save_means_and_logvars(model, config, eval_dir_path, args.data_path)
 
-
-
-
-
+    # Job 3
+    means_logvars_dict = load_means_logvars_json(eval_dir_path)
+    make_plots(means_logvars_dict, eval_dir_path)
 
 
 
