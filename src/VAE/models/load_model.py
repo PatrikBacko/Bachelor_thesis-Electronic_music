@@ -6,6 +6,8 @@ from src.VAE.models.VAE_3_old import VAE_3_old
 
 import torch
 
+MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4']
+
 def create_model(model, latent_dim):
     '''
     Returns the VAE model based on the model_type
