@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 #TODO: CCA 10 vrstiev, kazde 3-4 vrstvy zmensieniwe, inac nezmensovat 
 
 class Encoder(nn.Module):
@@ -77,6 +76,8 @@ class Decoder(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU()
         )
 
         self.block_2 = nn.Sequential(
@@ -84,6 +85,8 @@ class Decoder(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
+            nn.ReLU()
         )
 
         self.block_1 = nn.Sequential(
@@ -91,6 +94,8 @@ class Decoder(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
+            nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
+            nn.ReLU()
         )
 
         self.block_0 = nn.Sequential(
@@ -110,9 +115,9 @@ class Decoder(nn.Module):
         return x
 
 
-class VAE_3(torch.nn.Module):
+class VAE_3_old(nn.Module):
     def __init__(self, latent_dim):
-        super(VAE_3, self).__init__()
+        super(VAE_3_old, self).__init__()
         self.encoder = Encoder(latent_dim)
         self.decoder = Decoder(latent_dim)
 

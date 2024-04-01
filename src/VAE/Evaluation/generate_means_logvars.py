@@ -2,7 +2,7 @@ from pathlib import Path
 import numpy as np
 import json
 
-from src.VAE.utils.data import load_wave, convert_to_mfcc, pad_or_trim, to_numpy, get_inverse_mfcc_kwargs, trim_wave
+from src.VAE.utils.data import load_wave, prepare_wave_for_model, to_numpy
 
 
 def return_mean_logvar(wave, sr, model, config):
@@ -19,8 +19,12 @@ def return_mean_logvar(wave, sr, model, config):
         np.array - mean of the wave in the latent space
         np.array - logvar of the wave in the latent space
     '''
-    x = pad_or_trim(convert_to_mfcc(wave, sr, config.mfcc_kwargs), config.pad_or_trim_length)
-    return model.encode(x)
+    x = prepare_wave_for_model(wave, sr, config)
+    mean, logvar = model.encode(x)
+    mean = to_numpy(mean).reshape(-1)
+    logvar = to_numpy(logvar).reshape(-1)
+
+    return mean, logvar
 
 
 def generate_and_save_means_and_logvars(model, config, output_path, data_path):
@@ -62,7 +66,7 @@ def generate_and_save_means_and_logvars(model, config, output_path, data_path):
     output_path = Path(output_path)
 
     means_logvars = {}
-    for group in config.sample_groups:
+    for group in config.sample_group:
         group_path = data_path / group / f'{group}_samples'
         means_logvars[group] = []
 
@@ -73,7 +77,7 @@ def generate_and_save_means_and_logvars(model, config, output_path, data_path):
             means_logvars[group].append({'sample_name': sample_path.name, 'mean': mean.tolist(), 'logvar': logvar.tolist()})
 
 
-    json.dump(means_logvars, open(output_path / 'means_logvars.json', 'w'), indent=4)
+    json.dump(means_logvars, open(output_path / 'means_logvars.json', 'w'))
 
 
 def load_means_logvars_json(path):

@@ -18,7 +18,7 @@ def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
     returns:
         loss - loss of the model
     '''
-    reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='mean') #mse for simplicity, could change in the future
+    reconstruction_loss = F.mse_loss(reconstructed_x, x, reduction='mean')
     kl_divergence = (- 0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp()))
 
     return (reconstruction_loss + kl_regularisation * kl_divergence, reconstruction_loss, kl_divergence)
@@ -45,7 +45,7 @@ def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.t
 
 
 
-def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x, kl_regularisation=1.0):
+def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x, kl_regularisation=1.0, learning_rate=0.001):
     '''
     trains the model
 
@@ -62,7 +62,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
     '''
     print('Training model...', file=log_file)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     model.train()
 

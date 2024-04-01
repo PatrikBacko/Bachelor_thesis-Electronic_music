@@ -26,7 +26,8 @@ class Config():
                 date_time= None, 
                 mfcc_kwargs=None, 
                 pad_or_trim_length=None,
-                kl_regularisation=1.0):
+                kl_regularisation=1.0,
+                learning_rate=0.001):
         
         self.model_name = model_name
         self.sample_group = sample_group
@@ -36,6 +37,7 @@ class Config():
         self.batch_size = batch_size
         self.pad_or_trim_length = pad_or_trim_length
         self.kl_regularisation = kl_regularisation
+        self.learning_rate = learning_rate
 
         self.date_time = date_time
 
@@ -94,7 +96,8 @@ def save_config(path, args, mfcc_kwargs):
                     date_time=datetime.now(), 
                     mfcc_kwargs=mfcc_kwargs,
                     pad_or_trim_length=args.pad_or_trim_length,
-                    kl_regularisation=args.kl_regularisation)
+                    kl_regularisation=args.kl_regularisation,
+                    learning_rate=args.learning_rate)
 
     with open(os.path.join(path, f'config.json'), 'w') as config_file:
         config_file.write(config.to_json())

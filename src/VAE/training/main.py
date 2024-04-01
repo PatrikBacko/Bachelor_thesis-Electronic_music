@@ -52,6 +52,7 @@ def parse_arguments():
                                                                 '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
 
     parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
+    parser.add_argument("--learning_rate", help="Learning rate for the model. (default is 0.001)", type=float, default=0.001)
     
     
     #Noise arguments
@@ -154,7 +155,7 @@ def main(argv: Sequence[str] | None =None) -> None:
             print('No noise added to the spectograms.\n', file=log_file)
                     
         #train the model
-        losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation)
+        losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation, learning_rate=args.learning_rate)
 
         #save model
         torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))

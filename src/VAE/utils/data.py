@@ -3,6 +3,8 @@ import numpy as np
 import librosa as lb
 import soundfile as sf
 
+import torch
+
 MFCC_KWARGS = {
     'n_mfcc': 512,
     'dct_type': 2,
@@ -162,3 +164,54 @@ def get_wave_from_mfcc(mfcc, sr = 44100, inverse_mfcc_kwargs = get_inverse_mfcc_
     '''
 
     return lb.feature.inverse.mfcc_to_audio(mfcc = mfcc, sr = sr, **inverse_mfcc_kwargs)
+
+
+def prepare_wave_for_model(wave, sr, config):
+    '''
+    prepares a wave for the model (mfcc conversion, padding or trimming, reshaping to torch tensor)
+
+    params:
+        wave (np.array) - wave to prepare
+        sr (int) - sample rate of the wave
+        config (utils.Config) - config of the model
+
+    returns:
+        torch.tensor - prepared wave
+    '''
+    mfcc = convert_to_mfcc(wave, sr, mfcc_kwargs=config.mfcc_kwargs)
+    mfcc = pad_or_trim(mfcc, config.pad_or_trim_length)
+
+    tensor = torch.tensor(mfcc).view(-1, 1, config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
+
+    return tensor
+
+
+def tensor_to_mfcc(tensor, config):
+    '''
+    Converts a tensor to mfcc
+
+    params:
+        tensor (torch.tensor) - tensor to convert
+        config (utils.Config) - config of the model
+
+    returns:
+        np.ndarray - converted tensor
+
+    '''
+    return to_numpy(tensor).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
+
+def tensor_to_wave(tensor, sr, config):
+    '''
+    Converts a tensor to wave
+
+    params:
+        tensor (torch.tensor) - tensor to convert
+        sr (int) - sample rate of the wave
+        config (utils.Config) - config of the model
+
+    returns:
+        np.array - converted tensor to wave
+    '''
+    mfcc = tensor_to_mfcc(tensor, config)
+    return get_wave_from_mfcc(mfcc, sr, get_inverse_mfcc_kwargs(config.mfcc_kwargs))
+
