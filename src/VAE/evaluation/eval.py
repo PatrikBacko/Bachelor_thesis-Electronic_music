@@ -61,7 +61,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     reconstruct_samples(model, config, eval_dir_path / 'reconstructed_samples', data_path=args.data_path, n_samples=10)
 
     # Job 2
-    reconstruct_convex_combinations()
+    # reconstruct_convex_combinations()
 
 
     # Job 3
@@ -70,8 +70,6 @@ def main(argv: Sequence[str] | None = None) -> None:
     # Job 4
     means_logvars_dict = load_means_logvars_json(eval_dir_path / 'means_logvars.json')
     make_plots(means_logvars_dict, eval_dir_path / 'plots')
-
-
 
 
 
