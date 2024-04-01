@@ -61,7 +61,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     reconstruct_samples(model, config, eval_dir_path / 'reconstructed_samples', data_path=args.data_path, n_samples=10)
 
     # Job 2
-    reconstruct_convex_combinations()
+    # reconstruct_convex_combinations()
 
 
     # Job 3
