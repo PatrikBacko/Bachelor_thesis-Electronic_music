@@ -19,6 +19,7 @@ from src.VAE.utils.data import MFCC_KWARGS
 from src.VAE.utils.prepare_data_train import prepare_train_loader
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
+from src.VAE.models.load_model import MODELS
 
 from src.VAE.models.load_model import create_model
 
@@ -39,7 +40,7 @@ def parse_arguments():
     parser.add_argument('data_dir', type=str, help='Required, Path to directory with samples.')
     parser.add_argument('output_path', type=str, help='Required, Path to directory where to save the model and logs etc.')
     parser.add_argument('--model_name', type=str, help='Required, Name of the log file.')
-    parser.add_argument('--model', type=str, choices= ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_1'], help='Model to train.')
+    parser.add_argument('--model', type=str, choices= MODELS, help='Model to train.')
 
     #optional arguments
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'
