@@ -40,7 +40,8 @@ def return_data_loader(mfccs_list, batch_size):
 
     return train_loader
 
-def prepare_train_loader(data_dir, sample_groups_list, length, batch_size):
+
+def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, scaler = None):
     '''prepares the data for training
 
     params:
@@ -57,6 +58,13 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size):
     waves = [load_wave(path) for path in paths_to_samples]
     mfccs = [convert_to_mfcc(wave, sr) for wave, sr in waves]
     padded_mfccs = [pad_or_trim(mfccs, length) for mfccs in mfccs]
-    train_loader = return_data_loader(padded_mfccs, batch_size)
+
+    if scaler:
+        scaler = scaler.fit(padded_mfccs)
+        transformed_mfccs = [scaler.transform(mfccs) for mfccs in padded_mfccs]
+    else:
+        transformed_mfccs = padded_mfccs
+
+    train_loader = return_data_loader(transformed_mfccs, batch_size)
 
     return train_loader

@@ -5,6 +5,8 @@ import soundfile as sf
 
 import torch
 
+from src.VAE.utils.scaler import load_scaler
+
 MFCC_KWARGS = {
     'n_mfcc': 512,
     'dct_type': 2,
@@ -178,8 +180,12 @@ def prepare_wave_for_model(wave, sr, config):
     returns:
         torch.tensor - prepared wave
     '''
+
     mfcc = convert_to_mfcc(wave, sr, mfcc_kwargs=config.mfcc_kwargs)
     mfcc = pad_or_trim(mfcc, config.pad_or_trim_length)
+
+    if config.scaler is not None:
+        mfcc = load_scaler(config.scaler).transform(mfcc)
 
     tensor = torch.tensor(mfcc).view(-1, 1, config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
@@ -198,7 +204,12 @@ def tensor_to_mfcc(tensor, config):
         np.ndarray - converted tensor
 
     '''
-    return to_numpy(tensor).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
+    mfcc = to_numpy(tensor).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
+
+    if config.scaler is not None:
+        mfcc = load_scaler(config.scaler).inverse_transform(mfcc)
+
+    return mfcc
 
 def tensor_to_wave(tensor, sr, config):
     '''

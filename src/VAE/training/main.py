@@ -22,6 +22,7 @@ from src.VAE.utils.config import save_config
 from src.VAE.models.load_model import MODELS
 
 from src.VAE.models.load_model import create_model
+from src.VAE.utils.scaler import create_scaler
 
 import datetime
 
@@ -54,6 +55,8 @@ def parse_arguments():
 
     parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
     parser.add_argument("--learning_rate", help="Learning rate for the model. (default is 0.001)", type=float, default=0.001)
+
+    parser.add_argument("--scaler", help="scaler for the data. (default is None)", type=str, default=None, choices=['standard'])
     
     
     #Noise arguments
@@ -129,8 +132,19 @@ def main(argv: Sequence[str] | None =None) -> None:
         else:
             args.sample_group = args.sample_group.split(',')
 
+        #prepare scaler 
+        if args.scaler:
+            scaler = create_scaler(args.scaler)
+            print(f'Scaler created with config: \n'
+                    f'\tScaler type: {args.scaler}\n', file=log_file)
+            args.scaler = scaler
+        else:
+            scaler = None
+            print('No scaler used.\n', file=log_file)
+
+
         #prepare data loader
-        train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size)
+        train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size, scaler=scaler)
         print(f'Data prepared for training. Sample groups: {", ".join(args.sample_group)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
 
         #device
