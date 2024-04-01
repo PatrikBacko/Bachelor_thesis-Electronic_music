@@ -1,6 +1,7 @@
 from src.VAE.models.VAE_1 import VAE_1
 from src.VAE.models.VAE_2 import VAE_2
 from src.VAE.models.VAE_3 import VAE_3
+from src.VAE.models.VAE_4 import VAE_4
 from src.VAE.models.VAE_3_old import VAE_3_old
 
 import torch
@@ -24,6 +25,8 @@ def create_model(model, latent_dim):
         return VAE_3(latent_dim)
     elif model == 'VAE_3_old':
         return VAE_3_old(latent_dim)
+    elif model == 'VAE_4':
+        return VAE_4(latent_dim)
     else:
         raise ValueError('Model type not found')
 
