@@ -29,7 +29,7 @@ def plot_means_dist_hist(means_and_logvars_dict, output_path):
     dists = []
     for group in means_and_logvars_dict:
         group_dists = [np.linalg.norm(sample['mean'] - np.zeros((sample['mean'].shape))) for sample in means_and_logvars_dict[group]]
-        ax[0].hist(group_dists, bins=100, alpha=1, label=group)
+        ax[0].hist(group_dists, bins=100, alpha=0.7, label=group)
 
         dists.extend(group_dists)
         
