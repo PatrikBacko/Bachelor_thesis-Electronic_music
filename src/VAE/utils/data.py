@@ -185,7 +185,7 @@ def prepare_wave_for_model(wave, sr, config):
     mfcc = pad_or_trim(mfcc, config.pad_or_trim_length)
 
     if config.scaler is not None:
-        mfcc = load_scaler(config.scaler).transform(mfcc)
+        mfcc = load_scaler(config.scaler).transform(mfcc.reshape(1, -1)).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
     tensor = torch.tensor(mfcc).view(-1, 1, config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
@@ -207,7 +207,7 @@ def tensor_to_mfcc(tensor, config):
     mfcc = to_numpy(tensor).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
     if config.scaler is not None:
-        mfcc = load_scaler(config.scaler).inverse_transform(mfcc)
+        mfcc = load_scaler(config.scaler).inverse_transform(mfcc.reshape(1, -1)).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
     return mfcc
 

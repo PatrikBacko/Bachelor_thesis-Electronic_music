@@ -1,4 +1,5 @@
 from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 
 SCALERS = ['standard']
@@ -37,8 +38,8 @@ def save_scaler_to_config(scaler):
     if isinstance(scaler, StandardScaler):
         scaler_config = {
             'type': 'standard',
-            'mean': scaler.mean_,
-            'scale': scaler.scale_
+            'mean': list(scaler.mean_),
+            'scale': list(scaler.scale_)
         }
     else:
         raise ValueError(f'Unknown scaler type: {scaler.__class__.__name__}')
@@ -61,8 +62,8 @@ def load_scaler(scaler_config):
 
     if scaler_config['type'] == 'standard':
         scaler = create_scaler(scaler_config['type'])
-        scaler.mean_ = scaler_config['mean']
-        scaler.scale_ = scaler_config['scale']
+        scaler.mean_ = np.array(scaler_config['mean'])
+        scaler.scale_ = np.array(scaler_config['scale'])
         return scaler
     
     else:

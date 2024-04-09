@@ -56,7 +56,7 @@ def parse_arguments():
     parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
     parser.add_argument("--learning_rate", help="Learning rate for the model. (default is 0.001)", type=float, default=0.001)
 
-    parser.add_argument("--scaler", help="scaler for the data. (default is None)", type=str, default=None, choices=['standard'])
+    parser.add_argument("--scaler", help="scaler for the data. (default is None)", type=str, default='None', choices=['None', 'standard'])
     
     
     #Noise arguments
@@ -115,6 +115,9 @@ def plot_losses(losses_all, output_path):
 def main(argv: Sequence[str] | None =None) -> None:
     parser = parse_arguments()
     args = parser.parse_args(argv)
+
+    if args.scaler == 'None':
+        args.scaler = None
 
     #start timer
     start = datetime.datetime.now()

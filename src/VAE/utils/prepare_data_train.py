@@ -60,10 +60,13 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, scale
     padded_mfccs = [pad_or_trim(mfccs, length) for mfccs in mfccs]
 
     if scaler:
-        scaler = scaler.fit(padded_mfccs)
-        transformed_mfccs = [scaler.transform(mfccs) for mfccs in padded_mfccs]
+        raveled_mfccs = np.array([mfcc.ravel() for mfcc in padded_mfccs])
+        scaler = scaler.fit(raveled_mfccs)
+
+        transformed_mfccs = scaler.transform(raveled_mfccs)
+        transformed_mfccs = transformed_mfccs.reshape(-1, padded_mfccs[0].shape[0], padded_mfccs[0].shape[1])
     else:
-        transformed_mfccs = padded_mfccs
+        transformed_mfccs = np.array(padded_mfccs)
 
     train_loader = return_data_loader(transformed_mfccs, batch_size)
 
