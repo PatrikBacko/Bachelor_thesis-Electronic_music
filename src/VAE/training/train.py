@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 from src.VAE.training.train_model import train
 from src.VAE.utils.data import MFCC_KWARGS
-from src.VAE.utils.prepare_data_train import prepare_train_loader
+from src.VAE.training.prepare_data_train import prepare_train_loader
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
 from src.VAE.models.load_model import MODELS

@@ -8,7 +8,9 @@ from pathlib import Path
 import numpy as np
 
 
-from src.VAE.evaluation.pca import get_fitted_pca
+from src.VAE.evaluation.jobs.pca import get_fitted_pca
+
+
 
 cm = 1/2.54
 

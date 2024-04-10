@@ -7,7 +7,7 @@ from pathlib import Path
 from src.VAE.utils.data import load_wave, save_wave, tensor_to_wave, prepare_wave_for_model, trim_wave
 
 
-def load_random_wave(data_path, sample_group = None, seed = None):
+def load_random_wave(data_path, sample_group = None, seed = None, test_samples = False):
         '''
         Loads a random wave from the data_path with a given sample_group, if not given, it chooses a random sample_group
 
@@ -15,6 +15,7 @@ def load_random_wave(data_path, sample_group = None, seed = None):
             data_path (Path) - path to the data
             sample_group (str) - sample group to choose from
             seed (int) - seed for the random generator
+            test_samples (bool) - whether to load test samples or not
 
         returns:
             np.array - loaded wave
@@ -24,8 +25,11 @@ def load_random_wave(data_path, sample_group = None, seed = None):
         if sample_group is None:
             sample_group = rng.choice([group for group in os.listdir(data_path) if os.path.isdir(data_path / group)])
         
-
         path_sample_group = data_path / sample_group / f'{sample_group}_samples'
+
+        if test_samples:
+            path_sample_group = data_path / sample_group / f'{sample_group}_test_samples'
+
         sample_name = rng.choice(os.listdir(path_sample_group))
         path_to_wave = path_sample_group / sample_name
 
@@ -55,7 +59,7 @@ def reconstruct_wave(wave, sr, model, config):
     return tensor_to_wave(reconstructed_x, sr, config)
 
 
-def reconstruct_random_samples(model, config, output_path, n_samples, data_path, original_wave_trim_length, seed = None):
+def reconstruct_random_train_samples(model, config, output_path, n_samples, data_path, original_wave_trim_length, seed = None):
     '''
     Selects n_samples random samples from the data_path and reconstructs them using the model for each sample_group the model was trained on. 
     The reconstructed samples and original ones (trimmed to a given length) are saved to the output_path
@@ -138,10 +142,10 @@ def reconstruct_samples(model, config, output_path, data_path = 'data/drums-one_
 
     original_wave_trim_length = 1.5
 
-    output_path_test = output_path / 'test'
+    output_path_test = output_path / 'reconstructed_test'
     output_path_test.mkdir(exist_ok=True)
     reconstruct_test_samples(model, config, output_path_test, data_path, original_wave_trim_length)
 
-    output_path_random = output_path / 'random'
+    output_path_random = output_path / 'reconstructed_train_random'
     output_path_random.mkdir(exist_ok=True)
-    reconstruct_random_samples(model, config, output_path_random, n_samples, data_path, original_wave_trim_length, seed)
+    reconstruct_random_train_samples(model, config, output_path_random, n_samples, data_path, original_wave_trim_length, seed)
