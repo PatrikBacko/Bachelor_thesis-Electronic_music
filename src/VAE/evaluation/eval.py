@@ -66,20 +66,20 @@ def main(argv: Sequence[str] | None = None) -> None:
     eval_dir_path = model_dir_path / 'evaluation'
     eval_dir_path.mkdir(exist_ok=True)
 
-    # # Job 1
-    # reconstruct_samples(model, 
-    #                     config, 
-    #                     eval_dir_path / 'samples', 
-    #                     data_path=args.data_path, 
-    #                     n_samples=2)
+    # Job 1
+    reconstruct_samples(model, 
+                        config, 
+                        eval_dir_path / 'samples', 
+                        data_path=args.data_path, 
+                        n_samples=2)
 
-    # # Job 2
-    # generate_convex_combinations(model, 
-    #                              config, 
-    #                              args.data_path, 
-    #                              eval_dir_path / 'samples' / 'convex_combinations', 
-    #                              test_samples=True, 
-    #                              seed=42)
+    # Job 2
+    generate_convex_combinations(model, 
+                                 config, 
+                                 args.data_path, 
+                                 eval_dir_path / 'samples' / 'convex_combinations', 
+                                 test_samples=True, 
+                                 seed=42)
     
     # Job 3
     sample_and_save_random_waves(model, 
