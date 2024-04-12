@@ -44,7 +44,7 @@ def parse_arguments():
     parser.add_argument('model_dir_path', type=str, help='Path to directory of the model to evaluate.')
     parser.add_argument('data_path', type=str, help='Path to the data to evaluate on.')
 
-    # parser.add_argument('-l', '--log_file', type=int, default=None, help='Path to a log file. If not given, logs will be printed to stdout.')
+    parser.add_argument('-l', '--log_file', type=int, default=None, help='Path to a log file. If not given, logs will be printed to stdout.')
 
     return parser
 
@@ -53,27 +53,32 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser = parse_arguments()
     args = parser.parse_args(argv)
 
-    # if args.log_file is not None:
-    #     sys.stdout = open(args.log_file, 'w')
 
+    if args.log_file is not None:
+        sys.stdout = open(args.log_file, 'w')
+
+    if args.log_file is not None: print(f'logging to {args.log_file}...')
+    else: print('logging to stdout...')
 
     model_dir_path = Path(args.model_dir_path)
 
     config = load_config(model_dir_path / 'config.json')
     model = load_model(model_dir_path / 'model.pkl', config.model, config.latent_dim)
+    print(f'Loading model {config.model_name} in {model_dir_path}...')
 
 
     eval_dir_path = model_dir_path / 'evaluation'
     eval_dir_path.mkdir(exist_ok=True)
 
-    # Job 1
+    print('Job 1: Reconstructing samples...')
     reconstruct_samples(model, 
                         config, 
                         eval_dir_path / 'samples', 
                         data_path=args.data_path, 
                         n_samples=2)
 
-    # Job 2
+
+    print('Job 2: Generating convex combinations of samples...')
     generate_convex_combinations(model, 
                                  config, 
                                  args.data_path, 
@@ -81,7 +86,8 @@ def main(argv: Sequence[str] | None = None) -> None:
                                  test_samples=True, 
                                  seed=42)
     
-    # Job 3
+
+    print('Job 3: Sampling random waves from latent space...')
     sample_and_save_random_waves(model, 
                                  config, 
                                  eval_dir_path / 'samples' / 'sampled_random', 
@@ -89,14 +95,17 @@ def main(argv: Sequence[str] | None = None) -> None:
                                  seed=None,
                                  sr=44_100)
 
-    # Job 4
+
+    print('Job 4: Generating and saving means and logvars...')
     generate_and_save_means_and_logvars(model, config, eval_dir_path, args.data_path)
 
-    # Job 5
+    
+    print('Job 5: Making plots...')
     means_logvars_dict = load_means_logvars_json(eval_dir_path / 'means_logvars.json')
     make_plots(means_logvars_dict, eval_dir_path / 'plots')
 
-    # Job 6
+
+    print('Job 6: Generating samples shifted by pca vectors...')
     generate_samples_with_pca_shift(model, 
                                     config, 
                                     means_logvars_dict, 
@@ -104,7 +113,6 @@ def main(argv: Sequence[str] | None = None) -> None:
                                     eval_dir_path / 'samples' / 'pca_shift', 
                                     test_samples=True, 
                                     seed=42)
-
 
 
 
