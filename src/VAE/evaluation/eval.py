@@ -19,7 +19,7 @@ Usage:
 '''
 
 import sys
-sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 from pathlib import Path
 from typing import Sequence
