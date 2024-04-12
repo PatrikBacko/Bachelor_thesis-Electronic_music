@@ -30,12 +30,11 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-import wave 
 import soundfile as sf
-import pyaudio
+import sounddevice as sd
+
 
 import argparse
-import os
 
 
 FEATURE_EXTRACTION_METHODS = ["mfcc", "mel", "stft"]
@@ -99,7 +98,7 @@ def build_arguments() -> argparse.ArgumentParser:
     parser.add_argument("-b", "--batch", help="process a batch of files", action="store_true", default=False)
 
     #TODO: save ???
-    parser.add_argument("-s", "--save", help="save rountrip with or without noise (or both)", choices=["noised", "round_trip", "both"], default=False)
+    # parser.add_argument("-s", "--save", help="save rountrip with or without noise (or both)", choices=["noised", "round_trip", "both"], default=False)
 
 
     return parser
@@ -143,6 +142,61 @@ dtype= np.float32
 # out=None
 
 
+MFCC_KWARGS = {
+    'n_mfcc': 512,
+    'dct_type': 2,
+    'norm': "ortho",
+    'lifter': 0,
+
+    #mel spectrogram kwargs
+    'n_fft': 512,  
+    'hop_length': 256,
+    'win_length': 512,
+    'window': "hann",
+    'center': True,
+    'pad_mode': "constant",
+    'power': 2.0,
+
+    #mel filterbank kwargs
+    'n_mels': 256,
+    'fmin': 0.0,
+    'fmax': None,
+    'htk': False
+    }
+
+def get_inverse_mfcc_kwargs(mfcc_kwargs = MFCC_KWARGS):
+    '''
+    Gets a list of mfccs and returns the inverse mfcc kwargs
+
+    params:
+        mfccs (list) - list of mfccs
+        inverse_mfcc_kwargs (dict) - kwargs for the inverse mfcc
+
+    returns:
+        dict - inverse mfcc kwargs
+    '''
+
+    return {
+        'n_mels': mfcc_kwargs['n_mels'],
+        'dct_type': mfcc_kwargs['dct_type'],
+        'norm': mfcc_kwargs['norm'],
+        'lifter': mfcc_kwargs['lifter'],
+        'n_fft': mfcc_kwargs['n_fft'],
+        'hop_length': mfcc_kwargs['hop_length'],
+        'win_length': mfcc_kwargs['win_length'],
+        'window':  mfcc_kwargs['window'],
+        'center': mfcc_kwargs['center'],
+        'pad_mode': mfcc_kwargs['pad_mode'],
+        'power': mfcc_kwargs['power'],
+
+
+        'ref': 1.0,
+        'n_iter': 32,
+        'length': None,
+        'dtype': np.float32
+    }
+
+
 
 #utils
 def load_lb_wave(file_path: str) -> tuple[np.ndarray, int]:
@@ -182,31 +236,19 @@ def save_lb_wave(wave: np.ndarray, sample_rate: int, output_file_path: str) -> N
 
 def play_wave(wave: np.ndarray, sample_rate: int) -> None:
     """
-    Play wave data using pyaudio
+    Play wave data
 
     params:
         - wave: wave data
         - sample_rate: wave sample rate
     """
-
-    p = pyaudio.PyAudio()
-
-    # open a stream
-    stream = p.open(format=pyaudio.paFloat32,
-                    channels=1,
-                    rate=sample_rate,
-                    output=True)
-
-    stream.write(wave.tobytes())
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
+    sd.play(wave, sample_rate)
+    sd.wait()
 
 
 
 #mfcc
-def get_mfcc(wave: np.ndarray, sample_rate: int, **kwargs) -> np.ndarray:
+def get_mfcc(wave: np.ndarray, sample_rate: int) -> np.ndarray:
     """
     Extract mfcc features from wave data
 
@@ -217,7 +259,7 @@ def get_mfcc(wave: np.ndarray, sample_rate: int, **kwargs) -> np.ndarray:
     returns:
         - mfcc spectogram
     """
-    return lb.feature.mfcc(y=wave, sr=sample_rate, **kwargs)
+    return lb.feature.mfcc(y=wave, sr=sample_rate, **MFCC_KWARGS)
 
 
 def mfcc_roundtrip(wave: np.ndarray, sample_rate: int, noise_function: callable, **kwargs) -> np.ndarray:
@@ -237,7 +279,7 @@ def mfcc_roundtrip(wave: np.ndarray, sample_rate: int, noise_function: callable,
     #add noise to the spectogram
     mfcc_noised = noise_function(mfcc)
     #invert the mfcc spectogram
-    return lb.feature.inverse.mfcc_to_audio(mfcc_noised, sr = sample_rate)
+    return lb.feature.inverse.mfcc_to_audio(mfcc_noised, sr = sample_rate, **get_inverse_mfcc_kwargs(mfcc_kwargs=MFCC_KWARGS))
 
 
 
@@ -506,10 +548,10 @@ def main(args):
     #     if args.save
     #     save_lb_wave(round_trip, sample_rate, args.output)
 
-    if args.save == "noised":
-        save_lb_wave(round_trip_noised, sample_rate, args.output +"\\" +os.path.basename(args.input) + "_noised.wav")
-    elif args.save == "round_trip":
-        pass
+    # if args.save == "noised":
+    #     save_lb_wave(round_trip_noised, sample_rate, args.output +"\\" +os.path.basename(args.input) + "_noised.wav")
+    # elif args.save == "round_trip":
+    #     pass
 
 
 if __name__ == "__main__":

@@ -62,7 +62,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
     '''
     print('Training model...', file=log_file)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
     model.train()
 
