@@ -8,8 +8,8 @@ import os
 import torch
 
 
-import sys
-sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+# import sys
+# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 
 import matplotlib.pyplot as plt
@@ -60,7 +60,7 @@ def parse_arguments():
     
     
     #Noise arguments
-    parser.add_argument('-n','--noise', default='False', help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
+    parser.add_argument('-n','--noise', type=bool, default=False, help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
                         'if this argument is False, other arguments will be ignored. (default is False)\n')
     
     #argument for noise variance
