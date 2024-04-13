@@ -23,6 +23,7 @@ import sys
 
 from pathlib import Path
 from typing import Sequence
+import datetime
 
 import argparse
 
@@ -57,8 +58,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     if args.log_file is not None:
         sys.stdout = open(args.log_file, 'w')
 
-    if args.log_file is not None: print(f'logging to {args.log_file}...')
-    else: print('logging to stdout...')
+    start  = datetime.datetime.now()
+    print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
+
 
     model_dir_path = Path(args.model_dir_path)
 
@@ -70,7 +72,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     eval_dir_path = model_dir_path / 'evaluation'
     eval_dir_path.mkdir(exist_ok=True)
 
-    print('Job 1: Reconstructing samples...')
+    print('\tJob 1: Reconstructing samples...')
     reconstruct_samples(model, 
                         config, 
                         eval_dir_path / 'samples', 
@@ -78,7 +80,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                         n_samples=2)
 
 
-    print('Job 2: Generating convex combinations of samples...')
+    print('\tJob 2: Generating convex combinations of samples...')
     generate_convex_combinations(model, 
                                  config, 
                                  args.data_path, 
@@ -87,7 +89,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                                  seed=42)
     
 
-    print('Job 3: Sampling random waves from latent space...')
+    print('\tJob 3: Sampling random waves from latent space...')
     sample_and_save_random_waves(model, 
                                  config, 
                                  eval_dir_path / 'samples' / 'sampled_random', 
@@ -96,16 +98,16 @@ def main(argv: Sequence[str] | None = None) -> None:
                                  sr=44_100)
 
 
-    print('Job 4: Generating and saving means and logvars...')
+    print('\tJob 4: Generating and saving means and logvars...')
     generate_and_save_means_and_logvars(model, config, eval_dir_path, args.data_path)
 
     
-    print('Job 5: Making plots...')
+    print('\tJob 5: Making plots...')
     means_logvars_dict = load_means_logvars_json(eval_dir_path / 'means_logvars.json')
     make_plots(means_logvars_dict, eval_dir_path / 'plots')
 
 
-    print('Job 6: Generating samples shifted by pca vectors...')
+    print('\tJob 6: Generating samples shifted by pca vectors...')
     generate_samples_with_pca_shift(model, 
                                     config, 
                                     means_logvars_dict, 
@@ -113,6 +115,10 @@ def main(argv: Sequence[str] | None = None) -> None:
                                     eval_dir_path / 'samples' / 'pca_shift', 
                                     test_samples=True, 
                                     seed=42)
+    
+
+    end = datetime.datetime.now()
+    print(f'Evaluation finished in: {(end-start)}')
 
 
 

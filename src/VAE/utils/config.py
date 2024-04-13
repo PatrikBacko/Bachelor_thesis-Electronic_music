@@ -1,12 +1,12 @@
 '''
 script for logging the config of the model 
 '''
-from src.VAE.utils.scaler import save_scaler_to_config
 
 import os
-
 import json
 from datetime import datetime
+
+from src.VAE.utils.scaler import save_scaler_to_config
 
 class Config():
     '''

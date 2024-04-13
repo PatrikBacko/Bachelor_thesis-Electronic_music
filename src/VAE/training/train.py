@@ -3,16 +3,19 @@
 Script for training the model (Variational Autoencoder) on given samples and saving it.
 usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional args] 
 '''
-import os
 
-import torch
 
 
 # import sys
 # sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 
+import os
+import torch
+import argparse
+import datetime
 import matplotlib.pyplot as plt
+from typing import Sequence
 
 from src.VAE.training.train_model import train
 from src.VAE.utils.data import MFCC_KWARGS
@@ -24,11 +27,7 @@ from src.VAE.models.load_model import MODELS
 from src.VAE.models.load_model import create_model
 from src.VAE.utils.scaler import create_scaler
 
-import datetime
 
-import argparse
-
-from typing import Sequence
 
 def parse_arguments():
     '''
@@ -107,6 +106,7 @@ def plot_losses(losses_all, output_path):
     plt.title('Train loss in each epoch')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
+    plt.yscale('log')  # Add this line to set y-axis to logarithmic scale
     plt.legend()
 
     plt.savefig(os.path.join(output_path, 'train-loss.png'))
@@ -128,6 +128,7 @@ def main(argv: Sequence[str] | None =None) -> None:
 
     #create log file
     with open(os.path.join(args.output_path, f'training.log'), 'a+') as log_file: 
+        print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}', file=log_file)
         
         #choose sample groups
         if args.sample_group == 'all':
