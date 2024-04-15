@@ -19,7 +19,7 @@ Usage:
 '''
 
 import sys
-# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 from pathlib import Path
 from typing import Sequence
@@ -64,6 +64,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     config = load_config(model_dir_path / 'config.json')
     model = load_model(model_dir_path / 'model.pkl', config.model, config.latent_dim)
+    model.eval()
     print(f'Loading model {config.model_name} in {model_dir_path}...')
 
 

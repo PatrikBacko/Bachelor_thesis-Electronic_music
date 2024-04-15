@@ -8,8 +8,8 @@ import os
 import torch
 
 
-# import sys
-# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+import sys
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 
 import matplotlib.pyplot as plt

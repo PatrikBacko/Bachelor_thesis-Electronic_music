@@ -3,10 +3,13 @@ from src.VAE.models.VAE_2 import VAE_2
 from src.VAE.models.VAE_3 import VAE_3
 from src.VAE.models.VAE_4 import VAE_4
 from src.VAE.models.VAE_3_old import VAE_3_old
+from src.VAE.models.VAE_3_dropout import VAE_3_dropout
+from src.VAE.models.VAE_4_dropout import VAE_4_dropout
+from src.VAE.models.VAE_5_tied_weights import VAE_5_tied_weights
 
 import torch
 
-MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4']
+MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4', 'VAE_3_dropout', 'VAE_4_dropout', 'VAE_5_tied_weights']
 
 def create_model(model, latent_dim):
     '''
@@ -29,6 +32,12 @@ def create_model(model, latent_dim):
         return VAE_3_old(latent_dim)
     elif model == 'VAE_4':
         return VAE_4(latent_dim)
+    elif model == 'VAE_3_dropout':
+        return VAE_3_dropout(latent_dim)
+    elif model == 'VAE_4_dropout':
+        return VAE_4_dropout(latent_dim)
+    elif model == 'VAE_5_tied_weights':
+        return VAE_5_tied_weights(latent_dim)
     else:
         raise ValueError('Model type not found')
 

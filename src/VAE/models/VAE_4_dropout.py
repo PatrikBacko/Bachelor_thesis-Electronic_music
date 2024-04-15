@@ -11,7 +11,8 @@ class Encoder(nn.Module):
 
         self.block_0 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=8, kernel_size=7, stride=2, padding=3),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_1 = nn.Sequential(
@@ -20,7 +21,8 @@ class Encoder(nn.Module):
             nn.Conv2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_2 = nn.Sequential(
@@ -29,7 +31,8 @@ class Encoder(nn.Module):
             nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_3 = nn.Sequential(
@@ -38,7 +41,8 @@ class Encoder(nn.Module):
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_4 = nn.Sequential(
@@ -47,7 +51,8 @@ class Encoder(nn.Module):
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_fc = nn.Sequential(
@@ -83,6 +88,7 @@ class Decoder(nn.Module):
         self.block_fc = nn.Sequential(
             nn.Linear(latent_dim, 64 * 16 * 7),
             nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_4 = nn.Sequential(
@@ -91,7 +97,8 @@ class Decoder(nn.Module):
             nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_3 = nn.Sequential(
@@ -100,7 +107,8 @@ class Decoder(nn.Module):
             nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_2 = nn.Sequential(
@@ -109,7 +117,8 @@ class Decoder(nn.Module):
             nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_1 = nn.Sequential(
@@ -118,12 +127,14 @@ class Decoder(nn.Module):
             nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_0 = nn.Sequential(
             nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=7, stride=2, padding=3, output_padding=1),
         )
+
 
     def forward(self, x):
         x = self.block_fc(x)
@@ -139,9 +150,9 @@ class Decoder(nn.Module):
         return x
 
 
-class VAE_4(nn.Module):
+class VAE_4_dropout(nn.Module):
     def __init__(self, latent_dim):
-        super(VAE_4, self).__init__()
+        super(VAE_4_dropout, self).__init__()
         self.encoder = Encoder(latent_dim)
         self.decoder = Decoder(latent_dim)
 

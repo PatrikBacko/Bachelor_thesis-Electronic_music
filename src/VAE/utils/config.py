@@ -57,10 +57,12 @@ class Config():
         else:
             self.noise = None
 
-        self.scaler = scaler
-
+        
         self.mfcc_kwargs = mfcc_kwargs
         self.date_time = date_time
+        self.scaler = scaler
+
+        
 
 
     def to_json(self):

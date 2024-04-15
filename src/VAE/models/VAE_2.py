@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-#TODO: CCA 10 vrstiev, kazde 3-4 vrstvy zmensieniwe, inac nezmensovat 
 
 class Encoder(nn.Module):
     def __init__(self, latent_dim):
@@ -42,7 +41,6 @@ class Encoder(nn.Module):
             nn.ReLU()
         )
 
-        #TODO: maybe try to get rid of this block with some tricks as in resne, it could reduce the number of parameters
         self.block_fc = nn.Sequential(
             nn.Linear(256 * 32 * 14, latent_dim),
             nn.ReLU()

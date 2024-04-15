@@ -5,13 +5,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+
 class Encoder(nn.Module):
     def __init__(self, latent_dim):
         super(Encoder, self).__init__()
 
         self.block_0 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=8, kernel_size=7, stride=2, padding=3),
-            nn.ReLU()
+            nn.Conv2d(in_channels=1, out_channels=8, kernel_size=5, stride=2, padding=2),
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_1 = nn.Sequential(
@@ -19,8 +21,7 @@ class Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_2 = nn.Sequential(
@@ -28,8 +29,7 @@ class Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_3 = nn.Sequential(
@@ -37,21 +37,11 @@ class Encoder(nn.Module):
             nn.ReLU(),
             nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
-        )
-
-        self.block_4 = nn.Sequential(
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_fc = nn.Sequential(
-            nn.Linear(64 * 16 * 7, latent_dim),
+            nn.Linear(32 * 32 * 14, latent_dim),
             nn.ReLU()
         )
 
@@ -65,9 +55,8 @@ class Encoder(nn.Module):
         x = self.block_1(x)
         x = self.block_2(x)
         x = self.block_3(x)
-        x = self.block_4(x)
 
-        x = x.view(-1, 64 * 16 * 7)
+        x = x.view(-1, 32 * 32 * 14)
         x = self.block_fc(x)
 
         mu = self.fc_mu(x)
@@ -81,26 +70,17 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
 
         self.block_fc = nn.Sequential(
-            nn.Linear(latent_dim, 64 * 16 * 7),
+            nn.Linear(latent_dim, 32 * 32 * 14),
             nn.ReLU(),
-        )
-
-        self.block_4 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.ConvTranspose2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_3 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=64, out_channels=32, kernel_size=3, stride=2, padding=1, output_padding=1),
-            nn.ReLU(),
             nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.Dropout(0.1)
         )
 
         self.block_2 = nn.Sequential(
@@ -108,8 +88,7 @@ class Decoder(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.ConvTranspose2d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_1 = nn.Sequential(
@@ -117,19 +96,17 @@ class Decoder(nn.Module):
             nn.ReLU(),
             nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.ConvTranspose2d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
-            nn.ReLU()
+            nn.Dropout(0.1)
         )
 
         self.block_0 = nn.Sequential(
-            nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=7, stride=2, padding=3, output_padding=1),
+            nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=5, stride=2, padding=2, output_padding=1),
         )
 
     def forward(self, x):
         x = self.block_fc(x)
-        x = x.view(-1, 64, 16, 7)
+        x = x.view(-1, 32, 32, 14)
 
-        x = self.block_4(x)
         x = self.block_3(x)
         x = self.block_2(x)
         x = self.block_1(x)
@@ -139,9 +116,9 @@ class Decoder(nn.Module):
         return x
 
 
-class VAE_4(nn.Module):
+class VAE_3_dropout(torch.nn.Module):
     def __init__(self, latent_dim):
-        super(VAE_4, self).__init__()
+        super(VAE_3_dropout, self).__init__()
         self.encoder = Encoder(latent_dim)
         self.decoder = Decoder(latent_dim)
 
