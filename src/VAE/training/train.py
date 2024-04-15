@@ -7,7 +7,7 @@ usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional ar
 
 
 import sys
-sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
+# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 
 import os
