@@ -94,7 +94,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     sample_and_save_random_waves(model, 
                                  config, 
                                  eval_dir_path / 'samples' / 'sampled_random', 
-                                 n_samples=20, 
+                                 n_samples=5, 
                                  seed=None,
                                  sr=44_100)
 

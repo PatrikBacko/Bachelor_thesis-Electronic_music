@@ -75,7 +75,7 @@ def generate_samples_with_pca_shift(model, config, means_logvars_dict, data_path
 
     pca = get_fitted_pca(means_logvars_dict, 3)
 
-    alphas = [ -10, -1, -0.1, 0, 0.1, 0.5, 1, 5, 10 ]
+    alphas = [ -10, -5, -1, -0.1, 0, 0.1, 0.5, 1, 5, 10 ]
 
     for sample_type in ['kick', 'tom', 'crash', 'clap', 'snare']:
         wave, sr, sample_name = load_random_wave(data_path, sample_type, test_samples = test_samples, seed = seed)
