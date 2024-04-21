@@ -60,7 +60,7 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
     returns:
         losses - list of losses for each epoch
     '''
-    print('Training model...', file=log_file)
+    print('Training model...')
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
@@ -103,6 +103,6 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
         log_file.flush()
         
         losses.append((average_loss, average_rec_loss, average_kl_loss))
-    print('Finished training.', file=log_file) 
+    print('Finished training.') 
 
     return losses

@@ -28,7 +28,6 @@ def return_data_loader(mfccs_list, batch_size):
 
     params:
         mfccs_list - list of mfccs
-        log_file - file to log the process
         batch_size - batch size for the dataloader
 
     returns:
@@ -46,7 +45,6 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, scale
 
     params:
         source_dir - path to directory with samples
-        log_file - file to log the process
         length - length to pad or trim to
         batch_size - batch size for the dataloader
 

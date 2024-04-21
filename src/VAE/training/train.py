@@ -127,67 +127,68 @@ def main(argv: Sequence[str] | None =None) -> None:
         os.mkdir(args.output_path)
 
     #create log file
-    with open(os.path.join(args.output_path, f'training.log'), 'a+') as log_file: 
-        print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}', file=log_file)
-        
-        #choose sample groups
-        if args.sample_group == 'all':
-            args.sample_group = [group for group in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, group))]
-        else:
-            args.sample_group = args.sample_group.split(',')
+    sys.stdout = open(os.path.join(args.output_path, f'training.log'), 'a+')
 
-        #prepare scaler 
-        if args.scaler:
-            scaler = create_scaler(args.scaler)
-            print(f'Scaler created with config: \n'
-                    f'\tScaler type: {args.scaler}\n', file=log_file)
-            args.scaler = scaler
-        else:
-            scaler = None
-            print('No scaler used.\n', file=log_file)
+    print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
+    
+    #choose sample groups
+    if args.sample_group == 'all':
+        args.sample_group = [group for group in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, group))]
+    else:
+        args.sample_group = args.sample_group.split(',')
+
+    #prepare scaler 
+    if args.scaler:
+        scaler = create_scaler(args.scaler)
+        print(f'Scaler created with config: \n'
+                f'\tScaler type: {args.scaler}\n')
+        args.scaler = scaler
+    else:
+        scaler = None
+        print('No scaler used.\n')
 
 
-        #prepare data loader
-        train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size, scaler=scaler)
-        print(f'Data prepared for training. Sample groups: {", ".join(args.sample_group)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}', file=log_file)
+    #prepare data loader
+    train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size, scaler=scaler)
+    print(f'Data prepared for training. Sample groups: {", ".join(args.sample_group)}\n, mfcc length: {args.pad_or_trim_length}, data directory {args.data_dir}')
 
-        #device
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        print(f'Device : {device}\n', file=log_file)
+    #device
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'Device : {device}\n')
 
-        #create model
-        model = create_model(args.model, args.latent_dim).to(device)
-        print(f'Model {args.model_name} created. (model type: {args.model})\n', file=log_file)
+    #create model
+    model = create_model(args.model, args.latent_dim).to(device)
+    print(f'Model {args.model_name} created. (model type: {args.model})\n')
 
-        #noise function
-        if args.noise:
-            noise_function = generate_noise(args.mean, args.variance, args.distribution, args.scope, args.operation)
-            print(f'Noise function created with config: \n'
-                    f'\tNoise distribution: {args.distribution}\n'
-                    f'\tNoise operation: {args.operation}\n'
-                    f'\tNoise scope: {args.scope}\n'
-                    f'\tNoise variance: {args.variance}\n'
-                    f'\tNoise mean: {args.mean}\n', file=log_file)
+    #noise function
+    if args.noise:
+        noise_function = generate_noise(args.mean, args.variance, args.distribution, args.scope, args.operation)
+        print(f'Noise function created with config: \n'
+                f'\tNoise distribution: {args.distribution}\n'
+                f'\tNoise operation: {args.operation}\n'
+                f'\tNoise scope: {args.scope}\n'
+                f'\tNoise variance: {args.variance}\n'
+                f'\tNoise mean: {args.mean}\n')
 
-        else:
-            noise_function = lambda x:x
-            print('No noise added to the spectograms.\n', file=log_file)
-                    
-        #train the model
-        losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation, learning_rate=args.learning_rate)
+    else:
+        noise_function = lambda x:x
+        print('No noise added to the spectograms.\n')
+                
+    #train the model
+    losses = train(model, train_loader, args.epochs, device, log_file, noise_function=noise_function, kl_regularisation=args.kl_regularisation, learning_rate=args.learning_rate)
 
-        #save model
-        torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))
-        print(f'Model saved to {args.output_path}', file=log_file)
+    #save model
+    torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))
+    print(f'Model saved to {args.output_path}')
 
-        plot_losses(losses, args.output_path)
+    plot_losses(losses, args.output_path)
 
-        # save config
-        save_config(args.output_path, args, MFCC_KWARGS)
+    # save config
+    save_config(args.output_path, args, MFCC_KWARGS)
 
-        #end timer
-        end = datetime.datetime.now()
-        print(f'Training finished in {end-start}', file=log_file)
+    #end timer
+    end = datetime.datetime.now()
+    print(f'Training finished in {end-start}')
 
 
 if __name__ == '__main__':
