@@ -73,51 +73,62 @@ def main(argv: Sequence[str] | None = None) -> None:
     eval_dir_path = model_dir_path / 'evaluation'
     eval_dir_path.mkdir(exist_ok=True)
 
-    print('\tJob 1: Reconstructing samples...')
-    reconstruct_samples(model, 
-                        config, 
-                        eval_dir_path / 'samples', 
-                        data_path=args.data_path, 
-                        n_samples=5)
+
+    jobs = {
+        'reconstruct_samples': 
+            lambda : reconstruct_samples(model, 
+                                         config, 
+                                         eval_dir_path / 'samples', 
+                                         data_path=args.data_path, 
+                                         n_samples=5),
+
+        'generate_convex_combinations': 
+            lambda : generate_convex_combinations(model, 
+                                                  config, 
+                                                  args.data_path, 
+                                                  eval_dir_path / 'samples' / 'convex_combinations', 
+                                                  test_samples=True, 
+                                                  seed=42),
+
+        'sample_random_waves': 
+            lambda : sample_and_save_random_waves(model, 
+                                                  config, 
+                                                  eval_dir_path / 'samples' / 'sampled_random', 
+                                                  n_samples=5, 
+                                                  seed=None, 
+                                                  sr=44_100),
+
+        'generate_means_logvars': 
+            lambda : generate_and_save_means_and_logvars(model, 
+                                                         config, 
+                                                         eval_dir_path, 
+                                                         args.data_path),
+
+        'make_plots': 
+            lambda : make_plots(load_means_logvars_json(eval_dir_path / 'means_logvars.json'), 
+                                eval_dir_path / 'plots'),
+
+        'generate_pca_shift':
+            lambda : generate_samples_with_pca_shift(model, 
+                                                     config, 
+                                                     load_means_logvars_json(eval_dir_path / 'means_logvars.json'), 
+                                                     args.data_path, 
+                                                     eval_dir_path / 'samples' / 'pca_shift', 
+                                                     test_samples=True, 
+                                                     seed=42)
+    }
 
 
-    print('\tJob 2: Generating convex combinations of samples...')
-    generate_convex_combinations(model, 
-                                 config, 
-                                 args.data_path, 
-                                 eval_dir_path / 'samples' / 'convex_combinations', 
-                                 test_samples=True, 
-                                 seed=42)
-    
-
-    print('\tJob 3: Sampling random waves from latent space...')
-    sample_and_save_random_waves(model, 
-                                 config, 
-                                 eval_dir_path / 'samples' / 'sampled_random', 
-                                 n_samples=5, 
-                                 seed=None,
-                                 sr=44_100)
+    for i, (job_name, job) in enumerate(jobs.items()):
+        print(f'Job {i+1}: {job_name}')
+        start_job = datetime.datetime.now()
+        job()
+        end_job = datetime.datetime.now()
+        print(f'\tfinished in: {(end_job-start_job)}')
+        print()
 
 
-    print('\tJob 4: Generating and saving means and logvars...')
-    generate_and_save_means_and_logvars(model, config, eval_dir_path, args.data_path)
-
-    
-    print('\tJob 5: Making plots...')
-    means_logvars_dict = load_means_logvars_json(eval_dir_path / 'means_logvars.json')
-    make_plots(means_logvars_dict, eval_dir_path / 'plots')
-
-
-    print('\tJob 6: Generating samples shifted by pca vectors...')
-    generate_samples_with_pca_shift(model, 
-                                    config, 
-                                    means_logvars_dict, 
-                                    args.data_path, 
-                                    eval_dir_path / 'samples' / 'pca_shift', 
-                                    test_samples=True, 
-                                    seed=42)
-    
-
+    print()
     end = datetime.datetime.now()
     print(f'Evaluation finished in: {(end-start)}')
 

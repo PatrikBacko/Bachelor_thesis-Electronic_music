@@ -87,7 +87,7 @@ def reconstruct_random_train_samples(model, config, output_path, n_samples, data
             save_wave(reconstructed_wave, sr, output_path / f'{wave_name}_reconstructed.wav')
 
 
-def reconstruct_test_samples(model, config, output_path,n_samples, data_path, original_wave_trim_length ):
+def reconstruct_test_samples(model, config, output_path, n_samples, data_path, original_wave_trim_length, seed = None):
     '''
     reconstructs all the test samples from the data_path using the model and saves the reconstructed samples and original ones (trimmed to a given length) to the output_path
 
@@ -101,11 +101,17 @@ def reconstruct_test_samples(model, config, output_path,n_samples, data_path, or
     returns:
         None
     '''
+    rng = np.random.default_rng(seed)
+
     for group in config.sample_group:
         path_to_group = data_path / group / f'{group}_test_samples'
 
-        i = 0
-        for sample_name in os.listdir(path_to_group):
+        i = 1
+
+        samples = os.listdir(path_to_group)
+        rng.shuffle(samples)
+
+        for sample_name in samples:
             sample_path = path_to_group / sample_name
 
             wave, sr = load_wave(sample_path)
