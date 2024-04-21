@@ -24,6 +24,7 @@ sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electron
 from pathlib import Path
 from typing import Sequence
 import datetime
+import os
 
 import argparse
 
@@ -45,8 +46,6 @@ def parse_arguments():
     parser.add_argument('model_dir_path', type=str, help='Path to directory of the model to evaluate.')
     parser.add_argument('data_path', type=str, help='Path to the data to evaluate on.')
 
-    parser.add_argument('-l', '--log_file', type=int, default=None, help='Path to a log file. If not given, logs will be printed to stdout.')
-
     return parser
 
 
@@ -54,24 +53,22 @@ def main(argv: Sequence[str] | None = None) -> None:
     parser = parse_arguments()
     args = parser.parse_args(argv)
 
+    model_dir_path = Path(args.model_dir_path)
+    eval_dir_path = model_dir_path / 'evaluation'
+    eval_dir_path.mkdir(exist_ok=True)
 
-    if args.log_file is not None:
-        sys.stdout = open(args.log_file, 'a+')
+    sys.stdout = open(eval_dir_path / 'evaluation.log', 'a+')
 
     start  = datetime.datetime.now()
     print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
 
 
-    model_dir_path = Path(args.model_dir_path)
 
     config = load_config(model_dir_path / 'config.json')
     model = load_model(model_dir_path / 'model.pkl', config.model, config.latent_dim)
     model.eval()
     print(f'Loading model {config.model_name} in {model_dir_path}...')
 
-
-    eval_dir_path = model_dir_path / 'evaluation'
-    eval_dir_path.mkdir(exist_ok=True)
 
 
     jobs = {
