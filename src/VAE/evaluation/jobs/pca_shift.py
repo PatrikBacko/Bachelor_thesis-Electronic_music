@@ -6,7 +6,7 @@ from pathlib import Path
 from src.VAE.evaluation.jobs.reconstruct_samples import load_random_wave
 from src.VAE.evaluation.jobs.pca import get_fitted_pca
 from src.VAE.utils.data import prepare_wave_for_model, tensor_to_wave, to_numpy, save_wave
-
+from src.VAE.exceptions.InvalidSamplingException import InvalidInverseConversionException
 
 
 def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_path, alphas):
@@ -30,11 +30,13 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
 
     comp = pca.components_
 
-    vector_1 = (comp[0] / np.linalg.norm(comp[0])).astype(np.float32)
-    vector_2 = (comp[1] / np.linalg.norm(comp[1])).astype(np.float32)
-    vector_3 = (comp[2] / np.linalg.norm(comp[2])).astype(np.float32)
+    vectors = {
+        'vector_1' : (comp[0] / np.linalg.norm(comp[0])).astype(np.float32),
+        'vector_2' : (comp[1] / np.linalg.norm(comp[1])).astype(np.float32),
+        'vector_3' : (comp[2] / np.linalg.norm(comp[2])).astype(np.float32),
+    }
 
-    for vector in [vector_1, vector_2, vector_3]:
+    for vector_name, vector in vectors.items():
 
         mean, _ = model.encode(prepare_wave_for_model(wave, sr, config))
         mean = to_numpy(mean)
@@ -45,9 +47,13 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
 
             reconstructed_x = model.decode(z)
 
-            reconstructed_wave = tensor_to_wave(reconstructed_x, sr, config)
-            
-            save_wave(reconstructed_wave, sr, output_path / f'{samle_name}_shift_{alpha}.wav')
+            try:
+                reconstructed_wave = tensor_to_wave(reconstructed_x, sr, config)
+                save_wave(reconstructed_wave, sr, output_path / f'{samle_name}_shift={alpha}_vector={vector_name}.wav')
+
+            except InvalidInverseConversionException as e:
+                print(f'Error with shifting a wave with with alpha={alpha} and vector={vector_name}')
+                print(f'\t{e}')
 
 
 

@@ -1,8 +1,0 @@
-VAE_3_low-learning-rate_5000-epochs
-- VAE 3 5000 epochs with low learning rate for seeing how network will behave in long training
-- iterating KL_regularisation and noise
-    - KL_regularisation = [0, 0.05, 0.1]
-    - noise = [False, multiplicative]
-
-- Conclusion:
-    - 
