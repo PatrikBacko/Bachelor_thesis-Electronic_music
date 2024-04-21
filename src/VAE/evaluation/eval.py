@@ -78,7 +78,7 @@ def main(argv: Sequence[str] | None = None) -> None:
                         config, 
                         eval_dir_path / 'samples', 
                         data_path=args.data_path, 
-                        n_samples=2)
+                        n_samples=5)
 
 
     print('\tJob 2: Generating convex combinations of samples...')
