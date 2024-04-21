@@ -121,9 +121,11 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     for i, (job_name, job) in enumerate(jobs.items()):
         print(f'Job {i+1}: {job_name}')
+
         start_job = datetime.datetime.now()
         job()
         end_job = datetime.datetime.now()
+        
         print(f'\tfinished in: {(end_job-start_job)}')
         print()
 
