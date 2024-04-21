@@ -45,7 +45,7 @@ def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.t
 
 
 
-def train(model, train_loader, epochs, device, log_file, noise_function=lambda x:x, kl_regularisation=1.0, learning_rate=0.001):
+def train(model, train_loader, epochs, device, noise_function=lambda x:x, kl_regularisation=1.0, learning_rate=0.001):
     '''
     trains the model
 
@@ -54,13 +54,12 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
         train_loader - dataloader with training data
         epochs - number of epochs to train the model
         device - device to train the model on
-        log_file - file to write logs to
         noise_function - function to add noise to the spectogram
 
     returns:
         losses - list of losses for each epoch
     '''
-    print('Training model...')
+    print('\n>> Training model...\n')
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
@@ -98,11 +97,10 @@ def train(model, train_loader, epochs, device, log_file, noise_function=lambda x
         print(f'===> Epoch: {epoch+1:4d} | ' +
               f'Total_loss: {average_loss:8.2f} | ' +
               f'Rec_loss: {(average_rec_loss):8.2f} | ' +
-              f'KL_loss: {(average_kl_loss):8.2f}  {(average_kl_loss*kl_regularisation):8.2f}', 
-              file=log_file)
-        log_file.flush()
+              f'KL_loss: {(average_kl_loss):8.2f}  {(average_kl_loss*kl_regularisation):8.2f}', flush=True)
+
         
         losses.append((average_loss, average_rec_loss, average_kl_loss))
-    print('Finished training.') 
+    print('\n>> Finished training.\n\n') 
 
     return losses

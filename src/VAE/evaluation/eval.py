@@ -60,14 +60,14 @@ def main(argv: Sequence[str] | None = None) -> None:
     sys.stdout = open(eval_dir_path / 'evaluation.log', 'a+')
 
     start  = datetime.datetime.now()
-    print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'>>> Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 
     config = load_config(model_dir_path / 'config.json')
     model = load_model(model_dir_path / 'model.pkl', config.model, config.latent_dim)
     model.eval()
-    print(f'Loading model {config.model_name} in {model_dir_path}...')
+    print(f'>>> Loading model {config.model_name} in {model_dir_path}\n')
 
 
 
@@ -117,13 +117,13 @@ def main(argv: Sequence[str] | None = None) -> None:
 
 
     for i, (job_name, job) in enumerate(jobs.items()):
-        print(f'Job {i+1}: {job_name}')
+        print(f'> Job {i+1}: {job_name}')
 
         start_job = datetime.datetime.now()
         job()
         end_job = datetime.datetime.now()
         
-        print(f'\tfinished in: {(end_job-start_job)}')
+        print(f'\tfinished in: {(end_job-start_job)}', flush=True)
         print()
 
 
