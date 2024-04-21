@@ -56,7 +56,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
 
     if args.log_file is not None:
-        sys.stdout = open(args.log_file, 'w')
+        sys.stdout = open(args.log_file, 'a+')
 
     start  = datetime.datetime.now()
     print(f'Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
