@@ -75,4 +75,4 @@ def sample_and_save_random_waves(model, config, output_path, n_samples=5, means 
     for mean in means:
         for scale in scales:
             for i in range(n_samples):
-                sample_and_save_random_wave(model, config, output_path, mean, scale, seed, sr)
+                sample_and_save_random_wave(model, config, output_path, mean, scale, seed, sr, str(i+1))

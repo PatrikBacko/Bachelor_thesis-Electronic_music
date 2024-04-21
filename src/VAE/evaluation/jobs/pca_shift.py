@@ -37,6 +37,8 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
     }
 
     for vector_name, vector in vectors.items():
+        vector_output_path = output_path / vector_name
+        vector_output_path.mkdir(exist_ok=True, parents=True)
 
         mean, _ = model.encode(prepare_wave_for_model(wave, sr, config))
         mean = to_numpy(mean)
@@ -49,7 +51,7 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
 
             try:
                 reconstructed_wave = tensor_to_wave(reconstructed_x, sr, config)
-                save_wave(reconstructed_wave, sr, output_path / f'{samle_name}_shift={alpha}_vector={vector_name}.wav')
+                save_wave(reconstructed_wave, sr, vector_output_path / f'{samle_name}__vector={vector_name}_shift={alpha}.wav')
 
             except InvalidInverseConversionException as e:
                 print(f'Error with shifting a wave with with alpha={alpha} and vector={vector_name}')
@@ -81,7 +83,7 @@ def generate_samples_with_pca_shift(model, config, means_logvars_dict, data_path
 
     pca = get_fitted_pca(means_logvars_dict, 3)
 
-    alphas = [ -10, -5, -1, -0.1, 0, 0.1, 0.5, 1, 5, 10 ]
+    alphas = [ -10, -5,-1,-0.5, 0 , 0.5, 1, 5, 10 ]
 
     for sample_type in ['kick', 'tom', 'crash', 'clap', 'snare']:
         wave, sr, sample_name = load_random_wave(data_path, sample_type, test_samples = test_samples, seed = seed)
