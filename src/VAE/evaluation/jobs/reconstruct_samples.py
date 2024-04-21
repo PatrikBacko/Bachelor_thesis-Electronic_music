@@ -155,7 +155,7 @@ def reconstruct_samples(model, config, output_path, data_path = 'data/drums-one_
 
     output_path_test = output_path / 'reconstructed_test'
     output_path_test.mkdir(exist_ok=True)
-    reconstruct_test_samples(model, config, output_path_test, n_samples,  data_path, original_wave_trim_length)
+    reconstruct_test_samples(model, config, output_path_test, n_samples,  data_path, original_wave_trim_length, seed)
 
     output_path_random = output_path / 'reconstructed_train_random'
     output_path_random.mkdir(exist_ok=True)

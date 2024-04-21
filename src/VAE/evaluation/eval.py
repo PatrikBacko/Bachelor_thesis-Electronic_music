@@ -46,6 +46,14 @@ def parse_arguments():
     parser.add_argument('model_dir_path', type=str, help='Path to directory of the model to evaluate.')
     parser.add_argument('data_path', type=str, help='Path to the data to evaluate on.')
 
+    parser.add_argument('--skip_job','-s', action='append', default=[], help='List of jobs to skip. Choices: '
+                                                                                                                'reconstruct_samples, '
+                                                                                                                'generate_convex_combinations, '
+                                                                                                                'sample_random_waves, '
+                                                                                                                'generate_means_logvars, '
+                                                                                                                'make_plots, '
+                                                                                                                'generate_pca_shift')
+
     return parser
 
 
@@ -117,14 +125,24 @@ def main(argv: Sequence[str] | None = None) -> None:
 
 
     for i, (job_name, job) in enumerate(jobs.items()):
-        print(f'> Job {i+1}: {job_name}')
+        print(f'> Job {i+1}: {job_name}', flush=True)
+        if job_name in args.skip_job:
+            print(f'\tskipping...')
+            print()
+            continue
 
-        start_job = datetime.datetime.now()
-        job()
-        end_job = datetime.datetime.now()
-        
-        print(f'\tfinished in: {(end_job-start_job)}', flush=True)
-        print()
+        try:
+            start_job = datetime.datetime.now()
+            job()
+            end_job = datetime.datetime.now()
+            
+            print(f'\tfinished in: {(end_job-start_job)}')
+            print()
+            
+        except Exception as e:
+            print(f'\tfailed with error: {e}')
+            print()
+            continue
 
 
     print()
