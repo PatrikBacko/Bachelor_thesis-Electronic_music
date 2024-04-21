@@ -68,7 +68,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     sys.stdout = open(eval_dir_path / 'evaluation.log', 'a+')
 
     start  = datetime.datetime.now()
-    print(f'>>> Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'>>> Date and time of evaluation: {start.strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 
