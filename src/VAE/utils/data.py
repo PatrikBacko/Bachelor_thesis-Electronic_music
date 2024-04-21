@@ -6,6 +6,7 @@ import soundfile as sf
 import torch
 
 from src.VAE.utils.scaler import load_scaler
+from src.VAE.exceptions.InvalidSamplingException import InvalidInverseConversionException
 
 MFCC_KWARGS = {
     'n_mfcc': 512,
@@ -163,9 +164,17 @@ def get_wave_from_mfcc(mfcc, sr = 44100, inverse_mfcc_kwargs = get_inverse_mfcc_
 
     returns:
         np.ndarray - inverse of the mfcc
+
+    raises:
+        InvalidSamplingException - if there is an error with mfcc inverse conversion
     '''
 
-    return lb.feature.inverse.mfcc_to_audio(mfcc = mfcc, sr = sr, **inverse_mfcc_kwargs)
+    try:
+        return lb.feature.inverse.mfcc_to_audio(mfcc = mfcc, sr = sr, **inverse_mfcc_kwargs)
+
+    except:
+        raise InvalidInverseConversionException('Error with mfcc conversion')
+
 
 
 def prepare_wave_for_model(wave, sr, config):
@@ -202,7 +211,6 @@ def tensor_to_mfcc(tensor, config):
 
     returns:
         np.ndarray - converted tensor
-
     '''
     mfcc = to_numpy(tensor).reshape(config.mfcc_kwargs['n_mels'], config.pad_or_trim_length)
 
@@ -222,7 +230,11 @@ def tensor_to_wave(tensor, sr, config):
 
     returns:
         np.array - converted tensor to wave
-    '''
-    mfcc = tensor_to_mfcc(tensor, config)
-    return get_wave_from_mfcc(mfcc, sr, get_inverse_mfcc_kwargs(config.mfcc_kwargs))
 
+    raises:
+        InvalidSamplingException - if there is an error with spectogram inverse conversion
+    '''
+
+    mfcc = tensor_to_mfcc(tensor, config)
+
+    return get_wave_from_mfcc(mfcc, sr, get_inverse_mfcc_kwargs(config.mfcc_kwargs))
