@@ -109,10 +109,6 @@ def main(argv: Sequence[str] | None = None) -> None:
                                                          eval_dir_path, 
                                                          args.data_path),
 
-        'make_plots': 
-            lambda : make_plots(load_means_logvars_json(eval_dir_path / 'means_logvars.json'), 
-                                eval_dir_path / 'plots'),
-
         'generate_pca_shift':
             lambda : generate_samples_with_pca_shift(model, 
                                                      config, 
@@ -120,7 +116,11 @@ def main(argv: Sequence[str] | None = None) -> None:
                                                      args.data_path, 
                                                      eval_dir_path / 'samples' / 'pca_shift', 
                                                      test_samples=True, 
-                                                     seed=42)
+                                                     seed=42),
+
+        'make_plots': 
+            lambda : make_plots(load_means_logvars_json(eval_dir_path / 'means_logvars.json'), 
+                                eval_dir_path / 'plots')
     }
 
 

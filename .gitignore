@@ -1,6 +1,8 @@
 data/
 **/__pycache__/
+
+
 results/results.xlsx
+results/~$results.xlsx
 results/models/
 results/models_pre_eval/
-
