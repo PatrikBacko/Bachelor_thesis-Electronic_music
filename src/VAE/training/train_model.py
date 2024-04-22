@@ -95,9 +95,9 @@ def train(model, train_loader, epochs, device, noise_function=lambda x:x, kl_reg
         average_kl_loss = kl_loss / len(train_loader.dataset) * train_loader.batch_size
 
         print(f'===> Epoch: {epoch+1:4d} | ' +
-              f'Total_loss: {average_loss:10.4f} | ' +
-              f'Rec_loss: {(average_rec_loss):10.4f} | ' +
-              f'KL_loss: {(average_kl_loss):10.4f}  {(average_kl_loss*kl_regularisation):10.4f}', flush=True)
+              f'Total_loss: {average_loss:11.5f} | ' +
+              f'Rec_loss: {(average_rec_loss):11.5f} | ' +
+              f'KL_loss: {(average_kl_loss):11.5f}  {(average_kl_loss*kl_regularisation):11.5f}', flush=True)
 
         
         losses.append((average_loss, average_rec_loss, average_kl_loss))
