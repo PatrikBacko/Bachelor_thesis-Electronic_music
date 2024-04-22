@@ -130,7 +130,7 @@ def load_wave(path_to_sample):
     wave, sr = lb.load(path_to_sample)
 
     if sr != 44100:
-        wave = lb.resample(wave, sr, 44100)
+        wave = lb.resample(wave, orig_sr=sr, target_sr=44100)
         sr = 44100
 
     return wave, sr

@@ -131,18 +131,13 @@ def main(argv: Sequence[str] | None = None) -> None:
             print()
             continue
 
-        try:
-            start_job = datetime.datetime.now()
-            job()
-            end_job = datetime.datetime.now()
-            
-            print(f'\tfinished in: {(end_job-start_job)}')
-            print()
-            
-        except Exception as e:
-            print(f'\tfailed with error: {e}')
-            print()
-            continue
+        start_job = datetime.datetime.now()
+        job()
+        end_job = datetime.datetime.now()
+        
+        print(f'\tfinished in: {(end_job-start_job)}')
+        print()
+
 
 
     print()
