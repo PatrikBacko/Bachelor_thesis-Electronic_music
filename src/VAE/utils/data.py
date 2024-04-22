@@ -2,6 +2,7 @@
 import numpy as np
 import librosa as lb
 import soundfile as sf
+import scipy.io.wavfile as wav
 
 import torch
 
@@ -126,7 +127,13 @@ def load_wave(path_to_sample):
         np.array - loaded wave
         int - sample rate of the wave
     '''
-    return lb.load(path_to_sample)
+    wave, sr = lb.load(path_to_sample)
+
+    if sr != 44100:
+        wave = lb.resample(wave, sr, 44100)
+        sr = 44100
+
+    return wave, sr
 
 
 def save_wave(wave, sr, path_to_save):
@@ -138,7 +145,8 @@ def save_wave(wave, sr, path_to_save):
         sr (int) - sample rate of the wave
         path_to_save (str) - path to save the wave
     '''
-    sf.write(path_to_save, wave, sr, subtype='PCM_24')
+    # sf.write(path_to_save, wave, sr, subtype='PCM_24')
+    wav.write(path_to_save, sr, wave)
     
 
 def convert_to_mfcc(wave, sr, mfcc_kwargs = MFCC_KWARGS):

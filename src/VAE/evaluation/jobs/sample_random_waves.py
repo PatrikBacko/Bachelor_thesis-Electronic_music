@@ -48,13 +48,14 @@ def sample_and_save_random_wave(model, config, output_path, mean, scale, seed = 
     returns:
         None
     """
+    i = f"_{i}" if i != "" else i
     try:
         reconstructed_wave = sample_random_wave(model, config, mean, scale, seed, sr)
-        save_wave(reconstructed_wave, sr, output_path / f'sample_{i}_mean={mean}_scale={scale}.wav')
+        save_wave(reconstructed_wave, sr, output_path / f'sample_mean={mean}_scale={scale}{i}.wav')
 
     except InvalidInverseConversionException as e:
-        print(f'Error with sampling a wave with mean={mean} and scale={scale}')
-        print(f'\t{e}')
+        print(f'\tError with sampling a wave with mean={mean} and scale={scale}')
+        print(f'\t\t{e}')
 
 
 def sample_and_save_random_waves(model, config, output_path, n_samples=5, means = [0], scales = [1, 2, 3, 4, 5, 10], seed = None, sr = 44_100):

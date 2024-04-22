@@ -179,8 +179,10 @@ def make_plots(means_logvars_dict, output_path):
     output_path = Path(output_path)
     output_path.mkdir(exist_ok=True)
 
-
-    plot_means_dist_hist(means_logvars_dict, output_path)
-    plot_3D_reduced_dims_pca(means_logvars_dict, output_path)
-    plot_3D_reduced_dims_tsne(means_logvars_dict, output_path)
-    plot_pca_variance_ratio(means_logvars_dict, output_path)
+    try:
+        plot_means_dist_hist(means_logvars_dict, output_path)
+        plot_3D_reduced_dims_pca(means_logvars_dict, output_path)
+        plot_3D_reduced_dims_tsne(means_logvars_dict, output_path)
+        plot_pca_variance_ratio(means_logvars_dict, output_path)
+    except Exception as e:
+        print(f'\tError while making plots: {e}')

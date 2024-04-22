@@ -52,8 +52,8 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
                 save_wave(reconstructed_wave, sr, output_path / f'{samle_name}_shift={alpha}_vector={vector_name}.wav')
 
             except InvalidInverseConversionException as e:
-                print(f'Error with shifting a wave with with alpha={alpha} and vector={vector_name}')
-                print(f'\t{e}')
+                print(f'\tError with shifting a wave with with alpha={alpha} and vector={vector_name}')
+                print(f'\t\t{e}')
 
 
 
