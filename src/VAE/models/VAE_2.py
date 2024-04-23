@@ -123,7 +123,7 @@ class VAE_2(nn.Module):
     '''
     VAE model with 2 convolutional layers in the encoder and decoder
 
-    Default input size: (batchx1x256x100)
+    Default input size: (batchx1x256x112)
     '''
 
     def __init__(self, latent_dim):

@@ -3,9 +3,8 @@ import torch
 from pathlib import Path
 
 
-from src.VAE.evaluation.jobs.reconstruct_samples import load_random_wave
 from src.VAE.evaluation.jobs.pca import get_fitted_pca
-from src.VAE.utils.data import prepare_wave_for_model, tensor_to_wave, to_numpy, save_wave
+from src.VAE.utils.data import prepare_wave_for_model, tensor_to_wave, to_numpy, save_wave, load_random_wave
 from src.VAE.exceptions.InvalidSamplingException import InvalidInverseConversionException
 
 

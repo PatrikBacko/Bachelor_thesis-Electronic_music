@@ -55,7 +55,7 @@ def return_pad_or_trim_len(model):
     if model == 'VAE_1':
         return 100
     elif model == 'VAE_2':
-        return 100
+        return 112
     elif model == 'VAE_3':
         return 112
     elif model == 'VAE_3_old':

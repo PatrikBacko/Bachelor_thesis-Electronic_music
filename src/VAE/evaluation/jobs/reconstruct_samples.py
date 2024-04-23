@@ -3,39 +3,7 @@ import os
 from pathlib import Path
 
 
-from src.VAE.utils.data import load_wave, save_wave, tensor_to_wave, prepare_wave_for_model, trim_wave
-
-
-def load_random_wave(data_path, sample_group = None, seed = None, test_samples = False):
-        '''
-        Loads a random wave from the data_path with a given sample_group, if not given, it chooses a random sample_group
-
-        params:
-            data_path (Path) - path to the data
-            sample_group (str) - sample group to choose from
-            seed (int) - seed for the random generator
-            test_samples (bool) - whether to load test samples or not
-
-        returns:
-            np.array - loaded wave
-        '''
-        rng = np.random.default_rng(seed)
-
-        if sample_group is None:
-            sample_group = rng.choice([group for group in os.listdir(data_path) if os.path.isdir(data_path / group)])
-        
-        path_sample_group = data_path / sample_group / f'{sample_group}_samples'
-
-        if test_samples:
-            path_sample_group = data_path / sample_group / f'{sample_group}_test_samples'
-
-        sample_name = rng.choice(os.listdir(path_sample_group))
-        path_to_wave = path_sample_group / sample_name
-
-
-        wave, sr = load_wave(path_to_wave)
-    
-        return wave, sr, sample_name
+from src.VAE.utils.data import load_wave, save_wave, tensor_to_wave, prepare_wave_for_model, trim_wave, load_random_wave
 
 
 def reconstruct_wave(wave, sr, model, config):
