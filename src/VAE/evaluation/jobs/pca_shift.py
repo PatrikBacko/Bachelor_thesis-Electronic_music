@@ -34,6 +34,8 @@ def pca_shift_and_save_wave(wave, sr, samle_name, model, config, pca, output_pat
         'vector_1' : (comp[0] / np.linalg.norm(comp[0])).astype(np.float32),
         'vector_2' : (comp[1] / np.linalg.norm(comp[1])).astype(np.float32),
         'vector_3' : (comp[2] / np.linalg.norm(comp[2])).astype(np.float32),
+        'vector_4' : (comp[3] / np.linalg.norm(comp[3])).astype(np.float32),
+        'vector_5' : (comp[4] / np.linalg.norm(comp[4])).astype(np.float32)
     }
 
     for vector_name, vector in vectors.items():
@@ -81,9 +83,9 @@ def generate_samples_with_pca_shift(model, config, means_logvars_dict, data_path
     output_path.mkdir(exist_ok=True, parents=True)
 
 
-    pca = get_fitted_pca(means_logvars_dict, 3)
+    pca = get_fitted_pca(means_logvars_dict, 5)
 
-    alphas = [ -10, -5,-1,-0.5, 0 , 0.5, 1, 5, 10 ]
+    alphas = [ -4,-3,-2,-1,-0.5, 0 , 0.5, 1, 2, 3, 4]
 
     for sample_type in ['kick', 'tom', 'crash', 'clap', 'snare']:
         wave, sr, sample_name = load_random_wave(data_path, sample_type, test_samples = test_samples, seed = seed)
