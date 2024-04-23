@@ -5,6 +5,11 @@ import torch.nn.functional as F
 
 
 class VAE_5_tied_weights(nn.Module):
+    '''
+    input shape: (batch_size, 1, 256, 112)
+    '''
+
+
     def __init__(self, latent_dim):
         super(VAE_5_tied_weights, self).__init__()
         

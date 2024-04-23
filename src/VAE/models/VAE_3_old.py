@@ -114,6 +114,9 @@ class Decoder(nn.Module):
 
 
 class VAE_3_old(nn.Module):
+    '''
+    input shape: (batch_size, 1, 256, 112)
+    '''
     def __init__(self, latent_dim):
         super(VAE_3_old, self).__init__()
         self.encoder = Encoder(latent_dim)

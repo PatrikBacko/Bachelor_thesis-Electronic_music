@@ -6,10 +6,11 @@ from src.VAE.models.VAE_3_old import VAE_3_old
 from src.VAE.models.VAE_3_dropout import VAE_3_dropout
 from src.VAE.models.VAE_4_dropout import VAE_4_dropout
 from src.VAE.models.VAE_5_tied_weights import VAE_5_tied_weights
+from src.VAE.models.VAE_6 import VAE_6
 
 import torch
 
-MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4', 'VAE_3_dropout', 'VAE_4_dropout', 'VAE_5_tied_weights']
+MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4', 'VAE_3_dropout', 'VAE_4_dropout', 'VAE_5_tied_weights', 'VAE_6']
 
 def create_model(model, latent_dim):
     '''
@@ -38,10 +39,40 @@ def create_model(model, latent_dim):
         return VAE_4_dropout(latent_dim)
     elif model == 'VAE_5_tied_weights':
         return VAE_5_tied_weights(latent_dim)
+    elif model == 'VAE_6':
+        return VAE_6(latent_dim)
+    
     else:
         raise ValueError('Model type not found')
 
-    
+
+def return_pad_or_trim_len(model):
+    '''
+    Returns the padding or trimming size based on the model type
+    '''
+
+
+    if model == 'VAE_1':
+        return 100
+    elif model == 'VAE_2':
+        return 100
+    elif model == 'VAE_3':
+        return 112
+    elif model == 'VAE_3_old':
+        return 112
+    elif model == 'VAE_4':
+        return 112
+    elif model == 'VAE_3_dropout':
+        return 112
+    elif model == 'VAE_4_dropout':
+        return 112
+    elif model == 'VAE_5_tied_weights':
+        return 112
+    elif model == 'VAE_6':
+        return 128
+    else:
+        raise ValueError('Model type not found')
+
 
 def load_model(model_path, model_type, latend_dim, device='cpu'):
     '''

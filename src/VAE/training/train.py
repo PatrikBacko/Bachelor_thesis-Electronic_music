@@ -22,9 +22,8 @@ from src.VAE.utils.data import MFCC_KWARGS
 from src.VAE.training.prepare_data_train import prepare_train_loader
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
 from src.VAE.utils.config import save_config
-from src.VAE.models.load_model import MODELS
+from src.VAE.models.load_model import MODELS, create_model, return_pad_or_trim_len
 
-from src.VAE.models.load_model import create_model
 from src.VAE.utils.scaler import create_scaler
 
 
@@ -49,9 +48,9 @@ def parse_arguments():
     parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model. (default is 32)')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model. (default is 100)')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model. (default is 32)')
-    parser.add_argument('--pad_or_trim_length', type=int, default=112, help='Length of the spectogram to be trimmed or padded to. '
-                                                                '(default is 112, With the current settings of mfcc conversion, it is around 1 seconds of audio, and it is divisible by 2 several times, which is useful for the model.)')
-
+    parser.add_argument('--pad_or_trim_length', type=int, default=None, help='Length of the spectogram to be trimmed or padded to. '
+                                                                '(default is None, which means model will decide the length based on the model type.)')
+    
     parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
     parser.add_argument("--learning_rate", help="Learning rate for the model. (default is 0.001)", type=float, default=0.001)
 
@@ -147,6 +146,11 @@ def main(argv: Sequence[str] | None =None) -> None:
         scaler = None
         print('>>> No scaler used.\n')
 
+
+    # set the length of the spectogram based on the model type if not set
+    if args.pad_or_trim_length is None:
+        args.pad_or_trim_length = return_pad_or_trim_len(args.model)
+        print(f'> Spectogram length set to {args.pad_or_trim_length} based on the model type.\n')
 
     #prepare data loader
     train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size, scaler=scaler)
