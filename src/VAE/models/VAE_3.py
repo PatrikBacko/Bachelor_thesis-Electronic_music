@@ -109,9 +109,8 @@ class Decoder(nn.Module):
 
 
 class VAE_3(torch.nn.Module):
-    '''
-    input shape: (batch_size, 1, 256, 112)
-    '''
+    input_shape = ('batch_size', 1, 256, 112)
+
 
     def __init__(self, latent_dim):
         super(VAE_3, self).__init__()

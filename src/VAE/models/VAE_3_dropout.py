@@ -117,9 +117,8 @@ class Decoder(nn.Module):
 
 
 class VAE_3_dropout(torch.nn.Module):
-    '''
-    inout shape: (batch_size, 1, 256, 112)
-    '''
+    input_shape = ('batch_size', 1, 256, 112)
+
     def __init__(self, latent_dim):
         super(VAE_3_dropout, self).__init__()
         self.encoder = Encoder(latent_dim)

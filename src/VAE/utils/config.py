@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 
 from src.VAE.utils.scaler import save_scaler_to_config
+from src.VAE.utils.conversion import get_default_conversion_config
 
 class Config():
     '''
@@ -30,10 +31,11 @@ class Config():
                 operation='additive', 
                 scope='pixel', 
 
+                conversion_config = get_default_conversion_config('mfcc'),
                 scaler=None,
 
-                date_time= None, 
-                mfcc_kwargs=None):
+                date_time= None
+                ):
         
         self.model_name = model_name
         self.sample_group = sample_group
@@ -44,6 +46,7 @@ class Config():
         self.pad_or_trim_length = pad_or_trim_length
         self.kl_regularisation = kl_regularisation
         self.learning_rate = learning_rate
+        self.conversion_config = conversion_config
 
 
         if noise:
@@ -58,76 +61,101 @@ class Config():
             self.noise = None
 
         
-        self.mfcc_kwargs = mfcc_kwargs
         self.date_time = date_time
         self.scaler = scaler
 
-        
 
-
-    def to_json(self):
+    def _to_json(self, indent=None):
         config_dict = self.__dict__
-        config_dict['date_time'] = self.date_time.strftime("%d/%m/%Y %H:%M")
 
-        return json.dumps(config_dict)
+        return json.dumps(config_dict, indent=indent)
+    
+    def save_config(self, path):
+        '''
+        saves the config of the model to a json file
+
+        params:
+            path - path to the directory where to save the config
+            args - arguments of the model
+            mfcc_kwargs - kwargs for mfcc conversion config
+        '''
+        self.scaler = save_scaler_to_config(self.scaler)
+
+        with open(os.path.join(path, f'config.json'), 'w') as config_file:
+            config_file.write(self._to_json())
     
     @staticmethod
-    def from_json(json_str):
+    def _from_json(json_str):
 
         config_dict = json.loads(json_str)
 
         if config_dict['date_time'] is not None:
             config_dict['date_time'] = datetime.strptime(config_dict['date_time'], "%d/%m/%Y %H:%M")
+        
+        # convert legacy config to new config
+        if 'mfcc_kwargs' in config_dict:
+            config_dict = Config._legacy_congig_to_new(config_dict)
 
         return Config(**config_dict)
-
-
-
-def save_config(path, args, mfcc_kwargs):
-    '''
-    saves the config of the model to a json file
-
-    params:
-        path - path to the directory where to save the config
-        args - arguments of the model
-        mfcc_kwargs - kwargs for mfcc conversion config
-    '''
-    scaler = save_scaler_to_config(args.scaler)
-
-    config = Config(model_name=args.model_name, 
-                    sample_group=args.sample_group, 
-                    model=args.model, 
-                    latent_dim=args.latent_dim, 
-                    epochs=args.epochs, 
-                    batch_size=args.batch_size, 
-                    pad_or_trim_length=args.pad_or_trim_length,
-                    kl_regularisation=args.kl_regularisation,
-                    learning_rate=args.learning_rate,
-                    
-                    noise=args.noise, 
-                    variance=args.variance, 
-                    mean=args.mean, 
-                    distribution=args.distribution, 
-                    operation=args.operation, 
-                    scope=args.scope,
-
-                    scaler=scaler,
-
-                    date_time=datetime.now(), 
-                    mfcc_kwargs=mfcc_kwargs)
-
-    with open(os.path.join(path, f'config.json'), 'w') as config_file:
-        config_file.write(config.to_json())
-
-
-def load_config(path):
-    '''
-    loads the config of the model from a json file
-
-    params:
-        path - path to the directory where to save the config
-    '''
-    with open(path, 'r') as config_file:
-        json_str = config_file.read()
     
-    return Config.from_json(json_str)
+    @staticmethod
+    def _legacy_congig_to_new(config_dict):
+        
+        mfcc_kwargs = config_dict['mfcc_kwargs']
+        del config_dict['mfcc_kwargs']
+        conversion_config = get_default_conversion_config('mfcc')
+        conversion_config['kwargs'] = mfcc_kwargs
+        config_dict['conversion_config'] = conversion_config
+
+        return config_dict
+
+    @staticmethod
+    def create_config(args, conversion_config, pad_or_trim_length):
+        '''
+        creates the config of the model
+
+        params:
+            args - arguments of the model
+            conversion_config - config for the conversion
+        
+        returns:
+            Config - config of the model
+        '''
+
+        return Config(  sample_group=args.sample_group, 
+                        model=args.model, 
+                        latent_dim=args.latent_dim, 
+                        epochs=args.epochs, 
+                        batch_size=args.batch_size, 
+                        pad_or_trim_length=pad_or_trim_length,
+                        kl_regularisation=args.kl_regularisation,
+                        learning_rate=args.learning_rate,
+                        
+                        noise=args.noise, 
+                        variance=args.variance, 
+                        mean=args.mean, 
+                        distribution=args.distribution, 
+                        operation=args.operation, 
+                        scope=args.scope,
+
+                        conversion_config=conversion_config,
+                        scaler=args.scaler,
+
+                        date_time=datetime.now().strftime("%d/%m/%Y %H:%M"))
+
+
+    @staticmethod
+    def load(path):
+        '''
+        loads the config of the model from a json file
+
+        params:
+            path - path to the directory where to save the config
+
+        returns:
+            Config - config of the model
+        '''
+        with open(path, 'r') as config_file:
+            json_str = config_file.read()
+        
+        return Config._from_json(json_str)

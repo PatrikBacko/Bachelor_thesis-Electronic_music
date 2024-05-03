@@ -120,11 +120,7 @@ class Decoder(nn.Module):
 
 
 class VAE_2(nn.Module):
-    '''
-    VAE model with 2 convolutional layers in the encoder and decoder
-
-    Default input size: (batchx1x256x112)
-    '''
+    input_shape = ('batch_size', 1, 256, 112)
 
     def __init__(self, latent_dim):
         super(VAE_2, self).__init__()

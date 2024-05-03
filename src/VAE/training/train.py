@@ -1,31 +1,27 @@
  #!/usr/bin/env python3
 '''
 Script for training the model (Variational Autoencoder) on given samples and saving it.
-usage: python main.py [data_dir] [output_path] [--model_name]  [-h] [optional args] 
+usage: python main.py [data_dir] [output_path]  [-h] [optional args] 
 '''
-
-
-
 import sys
-# sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
-
+sys.path.append(r'C:\Users\llama\Desktop\cuni\bakalarka\Bachelor_thesis-Electronic_music')
 
 import os
 import torch
 import argparse
 import datetime
+import json
 import matplotlib.pyplot as plt
 from typing import Sequence
 
 from src.VAE.training.train_model import train
-from src.VAE.utils.data import MFCC_KWARGS
 from src.VAE.training.prepare_data_train import prepare_train_loader
 from src.VAE.utils.add_noise import generate_noise, NOISE_SCOPE, NOISE_OPERATION_TYPES, NOISE_GENERATING_DISTS
-from src.VAE.utils.config import save_config
-from src.VAE.models.load_model import MODELS, create_model, return_pad_or_trim_len
+from src.VAE.utils.config import Config
+from src.VAE.models.load_model import get_models_list, create_model, return_pad_or_trim_len, check_model_validity
 
 from src.VAE.utils.scaler import create_scaler
-
+from src.VAE.utils.conversion import get_default_conversion_config, get_converters_list
 
 
 def parse_arguments():
@@ -38,8 +34,7 @@ def parse_arguments():
     #required arguments
     parser.add_argument('data_dir', type=str, help='Required, Path to directory with samples.')
     parser.add_argument('output_path', type=str, help='Required, Path to directory where to save the model and logs etc.')
-    parser.add_argument('--model_name', type=str, help='Required, Name of the log file.')
-    parser.add_argument('--model', type=str, choices= MODELS, help='Model to train.')
+    parser.add_argument('--model', type=str, choices= get_models_list(), help='Model to train.')
 
     #optional arguments
     parser.add_argument('--sample_group', type=str, default='all', help='Names of the sample groups to train the model on, seperated by comma.'
@@ -48,13 +43,14 @@ def parse_arguments():
     parser.add_argument('--latent_dim', type=int, default=32, help='Latent dimension of the model. (default is 32)')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs to train the model. (default is 100)')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size for training the model. (default is 32)')
-    parser.add_argument('--pad_or_trim_length', type=int, default=None, help='Length of the spectogram to be trimmed or padded to. '
-                                                                '(default is None, which means model will decide the length based on the model type.)')
-    
     parser.add_argument("--kl_regularisation", help="KL divergence regularisation. (default is 1.0)", type=float, default=1.0)
     parser.add_argument("--learning_rate", help="Learning rate for the model. (default is 0.001)", type=float, default=0.001)
 
+    parser.add_argument("--conversion", help="conversion type for the data. (default is mfcc)", type=str, default='mfcc', choices=get_converters_list())
     parser.add_argument("--scaler", help="scaler for the data. (default is None)", type=str, default='None', choices=['None', 'standard'])
+
+    parser.add_argument("--config_path", type=str, default=None, help="path to the config file. (default is None)"
+                                                                        "if config is provided, other arguments will be ignored, except for data_dir and output_path")
     
     
     #Noise arguments
@@ -105,7 +101,7 @@ def plot_losses(losses_all, output_path):
     plt.title('Train loss in each epoch')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
-    plt.yscale('log')  # Add this line to set y-axis to logarithmic scale
+    plt.yscale('log')
     plt.legend()
 
     plt.savefig(os.path.join(output_path, 'train-loss.png'))
@@ -114,9 +110,6 @@ def plot_losses(losses_all, output_path):
 def main(argv: Sequence[str] | None =None) -> None:
     parser = parse_arguments()
     args = parser.parse_args(argv)
-
-    if args.scaler == 'None':
-        args.scaler = None
 
     #start timer
     start = datetime.datetime.now()
@@ -129,60 +122,59 @@ def main(argv: Sequence[str] | None =None) -> None:
     sys.stdout = open(os.path.join(args.output_path, f'training.log'), 'a+')
 
     print(f'>>> Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
-    
-    #choose sample groups
-    if args.sample_group == 'all':
-        args.sample_group = [group for group in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, group))]
+
+
+    if args.config_path:
+        config = Config.load(args.config_path)
+        print(f'>>> Config loaded from {args.config_path}\n'
+              f'\tconfig: {config._to_json(indent=2)}\n')
     else:
-        args.sample_group = args.sample_group.split(',')
+        #choose sample groups
+        if args.sample_group == 'all':
+            args.sample_group = [group for group in os.listdir(args.data_dir) if os.path.isdir(os.path.join(args.data_dir, group))]
+        else:
+            args.sample_group = args.sample_group.split(',')
 
-    #prepare scaler 
-    if args.scaler:
-        scaler = create_scaler(args.scaler)
-        print(f'> Scaler created with config: \n'
-                f'\tScaler type: {args.scaler}\n')
-        args.scaler = scaler
-    else:
-        scaler = None
-        print('>>> No scaler used.\n')
+        #prepare scaler 
+        if args.scaler == 'None':
+            args.scaler = None
+        else:
+            args.scaler = {'type': args.scaler}
+
+        config = Config.create_config(args, get_default_conversion_config(conversion_type=args.conversion), return_pad_or_trim_len(args.model))
+
+        print(f'>>> Config created from arguments.\n'
+              f'\tconfig: {config._to_json(indent=2)}\n')
 
 
-    # set the length of the spectogram based on the model type if not set
-    if args.pad_or_trim_length is None:
-        args.pad_or_trim_length = return_pad_or_trim_len(args.model)
-        print(f'> Spectogram length set to {args.pad_or_trim_length} based on the model type.\n')
+    #create scaler
+    if config.scaler:
+        config.scaler = create_scaler(config.scaler['type'])
 
     #prepare data loader
-    train_loader = prepare_train_loader(args.data_dir, args.sample_group, length=args.pad_or_trim_length, batch_size=args.batch_size, scaler=scaler)
-    print(f'> Data prepared for training.\n' 
-          f'\tSample groups: {", ".join(args.sample_group)}\n'
-          f'\tmfcc length: {args.pad_or_trim_length},\n'
-          f'\tdata directory {args.data_dir}\n')
+    train_loader = prepare_train_loader(args.data_dir, config.sample_group, length=config.pad_or_trim_length, batch_size=config.batch_size, conversion_config=config.conversion_config, scaler=config.scaler)
+    print(f'> Data prepared for training.\n')
 
     #device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f'> Device : {device}\n')
 
+    #check if the model is compatible with the conversion config
+    check_model_validity(config.model, config.conversion_config)
+
     #create model
-    model = create_model(args.model, args.latent_dim).to(device)
-    print(f'> Model {args.model_name} created. (model type: {args.model})\n', flush=True)
+    model = create_model(config.model, config.latent_dim).to(device)
+    print(f'> Model created. (model type: {config.model})\n', flush=True)
 
-    #noise function
-    if args.noise:
-        noise_function = generate_noise(args.mean, args.variance, args.distribution, args.scope, args.operation)
-        print(f'> Noise function created with config: \n'
-                f'\tNoise distribution: {args.distribution}\n'
-                f'\tNoise operation: {args.operation}\n'
-                f'\tNoise scope: {args.scope}\n'
-                f'\tNoise variance: {args.variance}\n'
-                f'\tNoise mean: {args.mean}\n')
-
+    if config.noise:
+        noise_function = generate_noise(config.noise['mean'], config.noise['variance'], config.noise['distribution'], config.noise['scope'], config.noise['operation'])
+        print(f'> Noise function created.\n')
     else:
         noise_function = lambda x:x
-        print('> No noise added to the spectograms.\n')
+        print(f'> No noise added to the spectograms.\n')
                 
     #train the model
-    losses = train(model, train_loader, args.epochs, device, noise_function=noise_function, kl_regularisation=args.kl_regularisation, learning_rate=args.learning_rate)
+    losses = train(model, train_loader, config.epochs, device, noise_function=noise_function, kl_regularisation=config.kl_regularisation, learning_rate=config.learning_rate)
 
     #save model
     torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))
@@ -191,7 +183,7 @@ def main(argv: Sequence[str] | None =None) -> None:
     plot_losses(losses, args.output_path)
 
     # save config
-    save_config(args.output_path, args, MFCC_KWARGS)
+    config.save_config(args.output_path)
 
     #end timer
     end = datetime.datetime.now()

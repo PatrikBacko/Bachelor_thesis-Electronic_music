@@ -2,9 +2,9 @@ import torch
 import numpy as np
 import os
 
-from src.VAE.utils.data import load_wave, convert_to_mfcc, pad_or_trim
+from src.VAE.utils.data import load_wave, get_spectogram, pad_or_trim
 
-def get_paths_to_samples(data_dir, sample_groups_list):
+def _get_paths_to_samples(data_dir, sample_groups_list):
     '''
     Gets list of sample groups and data directory, then returns list of paths to samples
     
@@ -22,25 +22,8 @@ def get_paths_to_samples(data_dir, sample_groups_list):
 
     return paths_to_samples
 
-def return_data_loader(mfccs_list, batch_size):
-    '''
-    gets list of mfccs, and returns a torch dataloader with them
 
-    params:
-        mfccs_list - list of mfccs
-        batch_size - batch size for the dataloader
-
-    returns:
-        train_loader - dataloader with mfccs
-    '''
-
-    mfccs_tensor = torch.tensor(np.array(mfccs_list)).view(-1, 1, mfccs_list[0].shape[0], mfccs_list[0].shape[1])
-    train_loader = torch.utils.data.DataLoader(mfccs_tensor, batch_size=batch_size, shuffle=True)
-
-    return train_loader
-
-
-def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, scaler = None):
+def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conversion_config, scaler = None):
     '''prepares the data for training
 
     params:
@@ -49,23 +32,23 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, scale
         batch_size - batch size for the dataloader
 
     returns:
-        train_loader - dataloader with padded or trimmed mfccs of the samples
+        train_loader - pytorch dataloader with padded or trimmed specgtograms of the samples
     '''
 
-    paths_to_samples = get_paths_to_samples(data_dir, sample_groups_list)
+    paths_to_samples = _get_paths_to_samples(data_dir, sample_groups_list)
     waves = [load_wave(path) for path in paths_to_samples]
-    mfccs = [convert_to_mfcc(wave, sr) for wave, sr in waves]
-    padded_mfccs = [pad_or_trim(mfccs, length) for mfccs in mfccs]
+    spectograms = [get_spectogram(wave, sr, conversion_config) for wave, sr in waves]
+    padded_spectograms = [pad_or_trim(spectogram, length) for spectogram in spectograms]
 
     if scaler:
-        raveled_mfccs = np.array([mfcc.ravel() for mfcc in padded_mfccs])
-        scaler = scaler.fit(raveled_mfccs)
+        raveled_spectograms = np.array([spectogram.ravel() for spectogram in padded_spectograms])
+        scaler = scaler.fit(raveled_spectograms)
 
-        transformed_mfccs = scaler.transform(raveled_mfccs)
-        transformed_mfccs = transformed_mfccs.reshape(-1, padded_mfccs[0].shape[0], padded_mfccs[0].shape[1])
+        transformed_spectograms = scaler.transform(raveled_spectograms)
+        transformed_spectograms = transformed_spectograms.reshape(-1, conversion_config['channels'], conversion_config['height'], length)
     else:
-        transformed_mfccs = np.array(padded_mfccs)
+        transformed_spectograms = np.array(padded_spectograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
 
-    train_loader = return_data_loader(transformed_mfccs, batch_size)
+    train_loader = torch.utils.data.DataLoader(torch.tensor(transformed_spectograms), batch_size=batch_size, shuffle=True)
 
     return train_loader

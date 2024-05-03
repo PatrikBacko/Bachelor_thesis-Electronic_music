@@ -10,7 +10,51 @@ from src.VAE.models.VAE_6 import VAE_6
 
 import torch
 
-MODELS = ['VAE_1', 'VAE_2', 'VAE_3', 'VAE_3_old', 'VAE_4', 'VAE_3_dropout', 'VAE_4_dropout', 'VAE_5_tied_weights', 'VAE_6']
+MODELS = {
+        'VAE_1': VAE_1,
+        'VAE_2': VAE_2,
+        'VAE_3': VAE_3,
+        'VAE_3_old': VAE_3_old,
+        'VAE_4': VAE_4,
+        'VAE_3_dropout': VAE_3_dropout,
+        'VAE_4_dropout': VAE_4_dropout,
+        'VAE_5_tied_weights': VAE_5_tied_weights,
+        'VAE_6' : VAE_6
+        }
+
+def get_models_list():
+    '''
+    Returns the list of available models
+
+    returns:
+        list, list of available models
+    '''
+    return MODELS.keys()
+
+def check_model_validity(model, conversion_config):
+    '''
+    checks if the model is valid based for chosen conversion_config
+
+    parameters:
+        model: str, model type
+        conversion_config: dict, configuration for the conversion
+
+    returns:
+        bool, True if model is valid, False otherwise
+    '''
+    if model not in MODELS:
+        raise ValueError(f"Model {model} not found. Available models are {MODELS.keys()}")
+
+    input_shape = return_input_shape(model)
+
+    if input_shape[1] != conversion_config['channels']:
+        raise ValueError(f"Model {model} expects {input_shape[1]} channels, but {conversion_config['channels']} channels were given")
+
+    if input_shape[2] != conversion_config['height']:
+        raise ValueError(f"Model {model} expects {input_shape[2]} height, but {conversion_config['height']} height was given")
+
+    else:
+        return True
 
 def create_model(model, latent_dim):
     '''
@@ -23,56 +67,31 @@ def create_model(model, latent_dim):
     returns:
         model: torch.nn.Module, model of the VAE
     '''
-    if model == 'VAE_1':
-        return VAE_1(latent_dim)
-    elif model == 'VAE_2':
-        return VAE_2(latent_dim)
-    elif model == 'VAE_3':
-        return VAE_3(latent_dim)
-    elif model == 'VAE_3_old':
-        return VAE_3_old(latent_dim)
-    elif model == 'VAE_4':
-        return VAE_4(latent_dim)
-    elif model == 'VAE_3_dropout':
-        return VAE_3_dropout(latent_dim)
-    elif model == 'VAE_4_dropout':
-        return VAE_4_dropout(latent_dim)
-    elif model == 'VAE_5_tied_weights':
-        return VAE_5_tied_weights(latent_dim)
-    elif model == 'VAE_6':
-        return VAE_6(latent_dim)
-    
-    else:
-        raise ValueError('Model type not found')
+    return MODELS[model](latent_dim)
 
+def return_input_shape(model):
+    '''
+    Returns the input shape based on the model type
+
+    parameters:
+        model: str, type of the model
+
+    returns:
+        input_shape: tuple, input shape of the model
+    '''
+    return MODELS[model].input_shape
 
 def return_pad_or_trim_len(model):
     '''
     Returns the padding or trimming size based on the model type
+
+    parameters:
+        model: str, type of the model
+
+    returns:
+        pad_or_trim_len: int, padding or trimming size of
     '''
-
-
-    if model == 'VAE_1':
-        return 100
-    elif model == 'VAE_2':
-        return 112
-    elif model == 'VAE_3':
-        return 112
-    elif model == 'VAE_3_old':
-        return 112
-    elif model == 'VAE_4':
-        return 112
-    elif model == 'VAE_3_dropout':
-        return 112
-    elif model == 'VAE_4_dropout':
-        return 112
-    elif model == 'VAE_5_tied_weights':
-        return 112
-    elif model == 'VAE_6':
-        return 128
-    else:
-        raise ValueError('Model type not found')
-
+    return MODELS[model].input_shape[3]
 
 def load_model(model_path, model_type, latend_dim, device='cpu'):
     '''

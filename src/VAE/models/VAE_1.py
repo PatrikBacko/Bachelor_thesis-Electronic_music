@@ -38,12 +38,8 @@ class Decoder(nn.Module):
         return x
 
 class VAE_1(nn.Module):
-    '''
-    VAE model with 1 convolutional layer in the encoder and 1 convolutional layer in the decoder.
+    input_shape = ('batch_size', 1, 256, 100)
 
-    input shape: (batch_size, 1, 256, 100)
-    
-    '''
     def __init__(self, latent_dim):
         super(VAE_1, self).__init__()
         self.encoder = Encoder(latent_dim)
