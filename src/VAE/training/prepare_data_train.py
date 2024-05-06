@@ -2,7 +2,9 @@ import torch
 import numpy as np
 import os
 
-from src.VAE.utils.data import load_wave, get_spectogram, pad_or_trim
+from src.VAE.utils.data import load_wave, get_spectogram
+from src.VAE.utils.conversion import pad_or_trim
+
 
 def _get_paths_to_samples(data_dir, sample_groups_list):
     '''
@@ -38,7 +40,7 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
     paths_to_samples = _get_paths_to_samples(data_dir, sample_groups_list)
     waves = [load_wave(path) for path in paths_to_samples]
     spectograms = [get_spectogram(wave, sr, conversion_config) for wave, sr in waves]
-    padded_spectograms = [pad_or_trim(spectogram, length) for spectogram in spectograms]
+    padded_spectograms = [pad_or_trim(spectogram, length, conversion_config) for spectogram in spectograms]
 
     if scaler:
         raveled_spectograms = np.array([spectogram.ravel() for spectogram in padded_spectograms])

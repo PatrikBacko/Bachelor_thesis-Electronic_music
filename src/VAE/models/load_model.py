@@ -8,6 +8,8 @@ from src.VAE.models.VAE_4_dropout import VAE_4_dropout
 from src.VAE.models.VAE_5_tied_weights import VAE_5_tied_weights
 from src.VAE.models.VAE_6 import VAE_6
 
+from src.VAE.models.VAE_4_2_channels import VAE_4_2_channels
+
 import torch
 
 MODELS = {
@@ -19,7 +21,9 @@ MODELS = {
         'VAE_3_dropout': VAE_3_dropout,
         'VAE_4_dropout': VAE_4_dropout,
         'VAE_5_tied_weights': VAE_5_tied_weights,
-        'VAE_6' : VAE_6
+        'VAE_6' : VAE_6,
+
+        'VAE_4_2_channels': VAE_4_2_channels
         }
 
 def get_models_list():

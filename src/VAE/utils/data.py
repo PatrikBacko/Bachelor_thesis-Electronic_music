@@ -8,7 +8,7 @@ import scipy.io.wavfile as wav
 
 import torch
 
-from src.VAE.utils.conversion import convert_wave_to_spectogram, convert_spectogram_to_wave
+from src.VAE.utils.conversion import convert_wave_to_spectogram, convert_spectogram_to_wave, pad_or_trim
 from src.VAE.utils.scaler import load_scaler
 from src.VAE.exceptions.InvalidSamplingException import InvalidInverseConversionException
 
@@ -45,35 +45,6 @@ def trim_wave(wave, sr, length):
         return wave[:int(sr * length)]
     else:
         return wave
-    
-
-def pad_or_trim(spectogram, length):
-    '''
-    pads or trims spectogram to given length, default is 100 ! (cca 1 second with 256 hop length and 512 n_fft and 44100 sr) !
-
-    params:
-        spectogram - spectogram to pad or trim
-        length - length to pad or trim to (default is 100)
-
-    returns:
-        spectogram - padded or trimmed spectogram
-    '''
-    
-    if len(spectogram.shape) < 3:
-        spectogram = spectogram.reshape(1, *spectogram.shape)
-
-    if spectogram.shape[2] > length:
-        spectogram =  spectogram[:, :, :length]
-    else:
-        last_column = spectogram[:, :, -1:]
-        padding = np.repeat(last_column, length - spectogram.shape[2], axis=2)
-        spectogram = np.concatenate((spectogram, padding), axis=2)
-
-    if spectogram.shape[0] == 1:
-        spectogram = spectogram.reshape(spectogram.shape[1], spectogram.shape[2])
-
-    return spectogram
-    
 
 def load_wave(path_to_sample):
     '''
@@ -213,7 +184,7 @@ def prepare_wave_for_model(wave, sr, config):
     '''
 
     spectogram = get_spectogram(wave, sr, conversion_config=config.conversion_config)
-    spectogram = pad_or_trim(spectogram, config.pad_or_trim_length)
+    spectogram = pad_or_trim(spectogram, config.pad_or_trim_length, config.conversion_config)
 
     if config.scaler is not None:
         scaler = load_scaler(config.scaler)

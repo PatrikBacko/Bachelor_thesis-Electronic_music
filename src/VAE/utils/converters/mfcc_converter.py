@@ -89,6 +89,29 @@ class MfccConverter(Converter):
             print(e, file=sys.stderr)
             raise InvalidInverseConversionException('Error with mfcc conversion')
         
+
+    def pad_or_trim_spectogram(self, spectogram, length):
+        '''
+        Pads or trims the spectogram to the desired length
+
+        params:
+            spectogram (np.ndarray) - spectogram to pad or trim
+            length (int) - length to pad or trim the spectogram
+
+        returns:
+            np.ndarray - padded or trimmed spectogram
+        '''
+
+        if spectogram.shape[1] > length:
+            spectogram =  spectogram[:, :length]
+        else:
+            last_column = spectogram[:, -1:]
+            padding = np.repeat(last_column, length - spectogram.shape[1], axis=1)
+
+            spectogram = np.concatenate((spectogram, padding), axis=1)
+
+        return spectogram
+        
         
     def _get_inverse_mfcc_kwargs(self, mfcc_kwargs = None):
         '''

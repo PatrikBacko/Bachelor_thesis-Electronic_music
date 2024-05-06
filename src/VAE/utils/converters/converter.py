@@ -43,8 +43,22 @@ class Converter(ABC):
       
       params:
          conversion_type (str) - type of conversion
+         pad_or_trim_length (int) - length to pad or trim the spectogram
 
       returns:
          dict - default kwargs for the conversion
       '''
       ... 
+
+   @abstractmethod
+   def pad_or_trim_spectogram(self, spectogram, length):
+      '''
+      Pads or trims the spectogram to the desired length
+
+      params:
+         conversion_config (dict) - configuration for the conversion
+
+      returns:
+         np.ndarray - padded or trimmed spectogram
+      '''
+      ...

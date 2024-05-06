@@ -85,6 +85,9 @@ class CqtConverter(Converter):
         wave = lb.icqt(C = cqt, sr = sr, **inverse_cqt_kwargs)
 
         return wave
+    
+    def pad_or_trim_spectogram(self, spectogram, length):
+        raise NotImplementedError("CQT does not support padding or trimming")
 
     def _get_inverse_cqt_kwargs(self, spectogram_kwargs = None):
         '''

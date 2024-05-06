@@ -7,8 +7,8 @@ from src.VAE.utils.converters.converter import Converter
 
 class StftConverter(Converter):
     STFT_KWARGS = {
-     'n_fft':2048,
-     'hop_length':None,
+     'n_fft':512,
+     'hop_length':256,
      'win_length':None,
      'window':'hann',
      'center':True,
@@ -18,18 +18,20 @@ class StftConverter(Converter):
     }
 
     
-    def get_default_config(self):
+    def get_default_config(self, kwargs = None):
         '''
         Gets the default config for the stft conversion
 
         returns:
             dict - default config for the stft conversion
         '''
+        if not kwargs: kwargs = StftConverter.STFT_KWARGS
+
         return {
             'type': 'stft',
-            'kwargs': StftConverter.STFT_KWARGS,
+            'kwargs': kwargs,
             'channels': 2,
-            'height': StftConverter.STFT_KWARGS['n_fft'] // 2 + 1,
+            'height': kwargs['n_fft'] // 2 + 1
         }
 
     
@@ -77,6 +79,29 @@ class StftConverter(Converter):
         wave = lb.istft(stft, **inverse_stft_kwargs)
 
         return wave
+
+    def pad_or_trim_spectogram(self, spectogram, length):
+        '''
+        Pads or trims the spectogram to the desired length
+
+        params:
+            spectogram (np.ndarray) - spectogram to pad or trim
+            length (int) - desired length
+            conversion_config (dict) - configuration for the conversion
+
+        returns:
+            np.ndarray - padded or trimmed spectogram
+        '''
+        if spectogram.shape[2] > length:
+            spectogram =  spectogram[:, :, :length]
+        else:
+            last_column = spectogram[:, :, -1:]
+            
+            padding = np.repeat(np.zeros_like(last_column), length - spectogram.shape[2], axis=2)
+
+            spectogram = np.concatenate((spectogram, padding), axis=2)
+
+        return spectogram
 
     
     def _get_inverse_stft_kwargs(self, spectogram_kwargs = None):
