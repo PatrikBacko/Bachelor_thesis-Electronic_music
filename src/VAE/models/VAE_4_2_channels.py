@@ -59,24 +59,15 @@ class Encoder(nn.Module):
         self.fc_logvar = nn.Linear(latent_dim, latent_dim)
 
     def forward(self, x):
-
-        print(f'encoder: input: {x.shape}')
         x = self.block_0(x)
-        print(f'encoder: after block_0: {x.shape}')
 
         x = self.block_1(x)
-        print(f'encoder: after block_1: {x.shape}')
         x = self.block_2(x)
-        print(f'encoder: after block_2: {x.shape}')
         x = self.block_3(x)
-        print(f'encoder: after block_3: {x.shape}')
         x = self.block_4(x)
-        print(f'encoder: after block_4: {x.shape}')
 
         x = x.view(-1, 64 * 17 * 16)
-        print(f'encoder: after view: {x.shape}')
         x = self.block_fc(x)
-        print(f'encoder: after block_fc: {x.shape}')
 
         mu = self.fc_mu(x)
         logvar = self.fc_logvar(x)
@@ -134,24 +125,15 @@ class Decoder(nn.Module):
         )
 
     def forward(self, x):
-        print(f'')
-        print(f'decoder: input: {x.shape}')
         x = self.block_fc(x)
-        print(f'decoder: after fc: {x.shape}')
         x = x.view(-1, 64, 17, 16)
-        print(f'decoder: after view: {x.shape}')
 
         x = self.block_4(x)
-        print(f'decoder: after block_4: {x.shape}')
         x = self.block_3(x)
-        print(f'decoder: after block_3: {x.shape}')
         x = self.block_2(x)
-        print(f'decoder: after block_2: {x.shape}')
         x = self.block_1(x)
-        print(f'decoder: after block_1: {x.shape}')
 
         x = self.block_0(x)
-        print(f'decoder: after block_0: {x.shape}')
 
         return x
 
