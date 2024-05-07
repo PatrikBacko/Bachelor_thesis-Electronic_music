@@ -116,18 +116,18 @@ def main(argv: Sequence[str] | None =None) -> None:
 
     #create output directory
     if not os.path.exists(args.output_path):
-        os.mkdir(args.output_path)
+        os.makedirs(args.output_path)
 
     #create log file
     sys.stdout = open(os.path.join(args.output_path, f'training.log'), 'a+')
 
-    print(f'>>> Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'>>> Date and time of training: {start.strftime("%Y-%m-%d %H:%M:%S")}', flush=True)
 
 
     if args.config_path:
         config = Config.load(args.config_path)
         print(f'>>> Config loaded from {args.config_path}\n'
-              f'\tconfig: {config._to_json(indent=2)}\n')
+              f'\tconfig: {config._to_json(indent=2)}\n', flush=True)
     else:
         #choose sample groups
         if args.sample_group == 'all':
@@ -144,7 +144,7 @@ def main(argv: Sequence[str] | None =None) -> None:
         config = Config.create_config(args, get_default_conversion_config(conversion_type=args.conversion), return_pad_or_trim_len(args.model))
 
         print(f'>>> Config created from arguments.\n'
-              f'\tconfig: {config._to_json(indent=2)}\n')
+              f'\tconfig: {config._to_json(indent=2)}\n', flush=True)
 
 
     #create scaler
@@ -153,11 +153,11 @@ def main(argv: Sequence[str] | None =None) -> None:
 
     #prepare data loader
     train_loader = prepare_train_loader(args.data_dir, config.sample_group, length=config.pad_or_trim_length, batch_size=config.batch_size, conversion_config=config.conversion_config, scaler=config.scaler)
-    print(f'> Data prepared for training.\n')
+    print(f'> Data prepared for training.\n', flush=True)
 
     #device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f'> Device : {device}\n')
+    print(f'> Device : {device}\n', flush=True)
 
     #check if the model is compatible with the conversion config
     check_model_validity(config.model, config.conversion_config)
@@ -168,17 +168,17 @@ def main(argv: Sequence[str] | None =None) -> None:
 
     if config.noise:
         noise_function = generate_noise(config.noise['mean'], config.noise['variance'], config.noise['distribution'], config.noise['scope'], config.noise['operation'])
-        print(f'> Noise function created.\n')
+        print(f'> Noise function created.\n', flush=True)
     else:
         noise_function = lambda x:x
-        print(f'> No noise added to the spectograms.\n')
+        print(f'> No noise added to the spectograms.\n', flush=True)
                 
     #train the model
     losses = train(model, train_loader, config.epochs, device, noise_function=noise_function, kl_regularisation=config.kl_regularisation, learning_rate=config.learning_rate)
 
     #save model
     torch.save(model.state_dict(), os.path.join(args.output_path, f'model.pkl'))
-    print(f'> Model saved to {args.output_path}\n')
+    print(f'> Model saved to {args.output_path}\n', flush=True)
 
     plot_losses(losses, args.output_path)
 
@@ -187,7 +187,7 @@ def main(argv: Sequence[str] | None =None) -> None:
 
     #end timer
     end = datetime.datetime.now()
-    print(f'>>> Training finished in {end-start}')
+    print(f'>>> Training finished in {end-start}', flush=True)
 
 
 if __name__ == '__main__':
