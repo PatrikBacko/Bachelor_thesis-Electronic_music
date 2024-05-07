@@ -57,8 +57,7 @@ def check_model_validity(model, conversion_config):
     if input_shape[2] != conversion_config['height']:
         raise ValueError(f"Model {model} expects {input_shape[2]} height, but {conversion_config['height']} height was given")
 
-    else:
-        return True
+    return True
 
 def create_model(model, latent_dim):
     '''

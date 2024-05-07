@@ -50,7 +50,7 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
         transformed_spectograms = transformed_spectograms.reshape(-1, conversion_config['channels'], conversion_config['height'], length)
     else:
         transformed_spectograms = np.array(padded_spectograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
-
+        
     train_loader = torch.utils.data.DataLoader(torch.tensor(transformed_spectograms), batch_size=batch_size, shuffle=True)
-
+    
     return train_loader
