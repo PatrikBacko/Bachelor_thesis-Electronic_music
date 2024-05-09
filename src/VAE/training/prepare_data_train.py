@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import os
+import gc
 
 from src.VAE.utils.data import load_wave, get_spectogram
 from src.VAE.utils.conversion import pad_or_trim
@@ -38,9 +39,9 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
     '''
 
     paths_to_samples = _get_paths_to_samples(data_dir, sample_groups_list)
-    waves = [load_wave(path) for path in paths_to_samples]
-    spectograms = [get_spectogram(wave, sr, conversion_config) for wave, sr in waves]
-    padded_spectograms = [pad_or_trim(spectogram, length, conversion_config) for spectogram in spectograms]
+    padded_spectograms = [pad_or_trim(spectogram, length, conversion_config) for spectogram in 
+                          [get_spectogram(wave, sr, conversion_config) for wave, sr in 
+                           [load_wave(path) for path in paths_to_samples]]]
 
     if scaler:
         raveled_spectograms = np.array([spectogram.ravel() for spectogram in padded_spectograms])
@@ -48,9 +49,15 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
 
         transformed_spectograms = scaler.transform(raveled_spectograms)
         transformed_spectograms = transformed_spectograms.reshape(-1, conversion_config['channels'], conversion_config['height'], length)
+        del raveled_spectograms
     else:
         transformed_spectograms = np.array(padded_spectograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
+
+    spectogram_tensor = torch.tensor(transformed_spectograms)
+    del padded_spectograms
+    del transformed_spectograms
+    gc.collect()
         
-    train_loader = torch.utils.data.DataLoader(torch.tensor(transformed_spectograms), batch_size=batch_size, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(spectogram_tensor, batch_size=batch_size, shuffle=True)
     
     return train_loader
