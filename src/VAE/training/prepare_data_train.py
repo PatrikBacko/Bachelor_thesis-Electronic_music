@@ -53,8 +53,10 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
     else:
         transformed_spectograms = np.array(padded_spectograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
 
-    spectogram_tensor = torch.tensor(transformed_spectograms)
     del padded_spectograms
+    gc.collect()
+
+    spectogram_tensor = torch.tensor(transformed_spectograms)
     del transformed_spectograms
     gc.collect()
         
