@@ -5,7 +5,7 @@ import numpy as np
 from src.VAE.utils.converters.converter import Converter
 
 
-class StftConverter(Converter):
+class StftConverter_gl_2_channels(Converter):
     STFT_KWARGS = {
      'n_fft':512,
      'hop_length':256,
@@ -25,10 +25,10 @@ class StftConverter(Converter):
         returns:
             dict - default config for the stft conversion
         '''
-        if not kwargs: kwargs = StftConverter.STFT_KWARGS
+        if not kwargs: kwargs = StftConverter_gl_2_channels.STFT_KWARGS
 
         return {
-            'type': 'stft',
+            'type': 'stft_gl_2_channels',
             'kwargs': kwargs,
             'channels': 2,
             'height': kwargs['n_fft'] // 2 + 1
@@ -47,7 +47,7 @@ class StftConverter(Converter):
         returns:
             np.ndarray - stft of the wave
         '''
-        if not spectogram_kwargs: spectogram_kwargs = StftConverter.STFT_KWARGS
+        if not spectogram_kwargs: spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
         
         stft = lb.stft(y=wave, **spectogram_kwargs)
         mag, phase = lb.magphase(stft)
@@ -57,26 +57,28 @@ class StftConverter(Converter):
         return spectogram
     
 
-    def convert_spectogram_to_wave(self, spectogram, sr, spectogram_kwargs = None):
-        '''
-        Gets a spectogram and its sample rate, then returns its wave
+    def convert_spectogram_to_wave(self, spectogram, sr, spectogram_kwargs=None):
+        """
+        Gets spectogram with magnitude and phase converted to angle, discards the phase and converts to a waveform using Griffin-Lim algorithm.
 
-        params:
-            spectogram (np.array) - spectogram to convert to wave
-            sr (int) - sample rate of the wave
-            inverse_kwargs (dict) - kwargs for the inverse stft conversion
+        Args:
+            spectogram (numpy.ndarray): The input spectrogram.
+            sr (int): The sample rate of the waveform.
+            spectogram_kwargs (dict, optional): Additional keyword arguments for the spectrogram computation.
+                Defaults to None.
 
-        returns:
-            np.ndarray - wave of the spectogram
-        '''
-        if not spectogram_kwargs: spectogram_kwargs = StftConverter.STFT_KWARGS
+        Returns:
+            numpy.ndarray: The reconstructed waveform.
 
-        inverse_stft_kwargs = self._get_inverse_stft_kwargs(spectogram_kwargs)
+        """
+        if not spectogram_kwargs:
+            spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
 
-        mag, phase_angle = spectogram[0, :, :], spectogram[1, :, :]
-        phase = np.exp(1.j * phase_angle)
-        stft = mag * phase
-        wave = lb.istft(stft, **inverse_stft_kwargs)
+        griffinlim_kwargs = self._get_griffinlim_kwargs(spectogram_kwargs)
+
+        mag = spectogram[0, :, :]
+
+        wave = lb.griffinlim(mag, **griffinlim_kwargs)
 
         return wave
 
@@ -103,26 +105,28 @@ class StftConverter(Converter):
 
         return spectogram
 
-    
-    def _get_inverse_stft_kwargs(self, spectogram_kwargs = None):
-        '''
-        Gets the inverse stft kwargs from the spectogram kwargs
 
-        params:
-            spectogram_kwargs (dict) - kwargs for the stft conversion
+    def _get_griffinlim_kwargs(self, spectogram_kwargs = None):
+        '''
+        Gets the kwargs for the griffinlim algorithm
 
         returns:
-            dict - inverse stft kwargs
+            dict - kwargs for the griffinlim algorithm
         '''
-        if not spectogram_kwargs: spectogram_kwargs = StftConverter.STFT_KWARGS
+        if not spectogram_kwargs: spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
 
         return {
-            'hop_length': spectogram_kwargs['hop_length'], 
-            'win_length': spectogram_kwargs['win_length'], 
-            'window': spectogram_kwargs['window'], 
-            'center': spectogram_kwargs['center'], 
-            
+            'n_iter': 32,
+            'pad_mode': 'constant',
+            'momentum': 0.99,
+            'init': 'random',
+            'random_state': None,
+
+            'hop_length': spectogram_kwargs['hop_length'],
+            'win_length': spectogram_kwargs['win_length'],
+            'window': spectogram_kwargs['window'],
+            'center': spectogram_kwargs['center'],
+
             'n_fft':None,
-            'length':None}
-            
-        
+            'length':None
+        }

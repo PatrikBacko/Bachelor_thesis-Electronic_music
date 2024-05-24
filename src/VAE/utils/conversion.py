@@ -1,11 +1,16 @@
 from src.VAE.utils.converters.mfcc_converter import MfccConverter
 from src.VAE.utils.converters.stft_converter import StftConverter
 from src.VAE.utils.converters.cqt_converter import CqtConverter
+from src.VAE.utils.converters.stft_converter_gl import StftConverter_gl
+from src.VAE.utils.converters.stft_converter_gl_2_channels import StftConverter_gl_2_channels
 
 CONVERTERS = {
     'mfcc': MfccConverter(),
     'stft': StftConverter(),
-    'cqt': CqtConverter()
+    'cqt': CqtConverter(),
+    'stft_gl': StftConverter_gl(),
+    'stft_gl_2_channels': StftConverter_gl_2_channels()
+
 }
 
 def _get_converter(conversion_type):

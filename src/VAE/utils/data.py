@@ -106,9 +106,9 @@ def save_wave(wave, sr, path_to_save):
     params:
         wave (np.array) - wave to save
         sr (int) - sample rate of the wave
-        path_to_save (str) - path to save the wave
+        path_to_save (str | Path) - path to save the wave
     '''
-    wav.write(path_to_save, sr, wave)
+    wav.write(str(path_to_save), sr, wave)
 
 
 def get_wave_from_spectogram(spectogram, sr, conversion_config):
