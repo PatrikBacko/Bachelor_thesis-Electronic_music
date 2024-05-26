@@ -18,7 +18,7 @@ def sample_random_wave(model, config, mean, scale, seed = None, sr = 44_100):
         np.array - reconstructed wave
 
     raises:
-        InvalidSamplingException - if there is an error with sampling (inverse of the spectogram is not possible)
+        InvalidSamplingException - if there is an error with sampling (inverse of the spectrogram is not possible)
     """
     
     if seed is not None:

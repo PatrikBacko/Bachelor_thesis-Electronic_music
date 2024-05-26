@@ -35,85 +35,85 @@ class StftConverter_gl_2_channels(Converter):
         }
 
     
-    def convert_wave_to_spectogram(self, wave, sr, spectogram_kwargs = None):
+    def convert_wave_to_spectrogram(self, wave, sr, spectrogram_kwargs = None):
         '''
         Gets a wave and its sample rate, then returns its stft magnitude and phase as angle in 2 channels
 
         params:
             wave (np.array) - wave to convert to stft
             sr (int) - sample rate of the wave
-            spectogram_kwargs (dict) - kwargs for the stft conversion
+            spectrogram_kwargs (dict) - kwargs for the stft conversion
 
         returns:
             np.ndarray - stft of the wave
         '''
-        if not spectogram_kwargs: spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
+        if not spectrogram_kwargs: spectrogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
         
-        stft = lb.stft(y=wave, **spectogram_kwargs)
+        stft = lb.stft(y=wave, **spectrogram_kwargs)
         mag, phase = lb.magphase(stft)
         phase_angle = np.angle(phase)
-        spectogram = np.concatenate([mag.reshape(1,*mag.shape), phase_angle.reshape(1, *phase_angle.shape)], axis=0)
+        spectrogram = np.concatenate([mag.reshape(1,*mag.shape), phase_angle.reshape(1, *phase_angle.shape)], axis=0)
 
-        return spectogram
+        return spectrogram
     
 
-    def convert_spectogram_to_wave(self, spectogram, sr, spectogram_kwargs=None):
+    def convert_spectrogram_to_wave(self, spectrogram, sr, spectrogram_kwargs=None):
         """
-        Gets spectogram with magnitude and phase converted to angle, discards the phase and converts to a waveform using Griffin-Lim algorithm.
+        Gets spectrogram with magnitude and phase converted to angle, discards the phase and converts to a waveform using Griffin-Lim algorithm.
 
         Args:
-            spectogram (numpy.ndarray): The input spectrogram.
+            spectrogram (numpy.ndarray): The input spectrogram.
             sr (int): The sample rate of the waveform.
-            spectogram_kwargs (dict, optional): Additional keyword arguments for the spectrogram computation.
+            spectrogram_kwargs (dict, optional): Additional keyword arguments for the spectrogram computation.
                 Defaults to None.
 
         Returns:
             numpy.ndarray: The reconstructed waveform.
 
         """
-        if not spectogram_kwargs:
-            spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
+        if not spectrogram_kwargs:
+            spectrogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
 
-        griffinlim_kwargs = self._get_griffinlim_kwargs(spectogram_kwargs)
+        griffinlim_kwargs = self._get_griffinlim_kwargs(spectrogram_kwargs)
 
-        mag = spectogram[0, :, :]
+        mag = spectrogram[0, :, :]
 
         wave = lb.griffinlim(mag, **griffinlim_kwargs)
 
         return wave
 
-    def pad_or_trim_spectogram(self, spectogram, length):
+    def pad_or_trim_spectrogram(self, spectrogram, length):
         '''
-        Pads or trims the spectogram to the desired length
+        Pads or trims the spectrogram to the desired length
 
         params:
-            spectogram (np.ndarray) - spectogram to pad or trim
+            spectrogram (np.ndarray) - spectrogram to pad or trim
             length (int) - desired length
             conversion_config (dict) - configuration for the conversion
 
         returns:
-            np.ndarray - padded or trimmed spectogram
+            np.ndarray - padded or trimmed spectrogram
         '''
-        if spectogram.shape[2] > length:
-            spectogram =  spectogram[:, :, :length]
+        if spectrogram.shape[2] > length:
+            spectrogram =  spectrogram[:, :, :length]
         else:
-            last_column = spectogram[:, :, -1:]
+            last_column = spectrogram[:, :, -1:]
             
-            padding = np.repeat(np.zeros_like(last_column), length - spectogram.shape[2], axis=2)
+            padding = np.repeat(np.zeros_like(last_column), length - spectrogram.shape[2], axis=2)
 
-            spectogram = np.concatenate((spectogram, padding), axis=2)
+            spectrogram = np.concatenate((spectrogram, padding), axis=2)
 
-        return spectogram
+        return spectrogram
 
 
-    def _get_griffinlim_kwargs(self, spectogram_kwargs = None):
+    def _get_griffinlim_kwargs(self, spectrogram_kwargs = None):
         '''
         Gets the kwargs for the griffinlim algorithm
 
         returns:
             dict - kwargs for the griffinlim algorithm
         '''
-        if not spectogram_kwargs: spectogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
+        if not spectrogram_kwargs: spectrogram_kwargs = StftConverter_gl_2_channels.STFT_KWARGS
 
         return {
             'n_iter': 32,
@@ -122,10 +122,10 @@ class StftConverter_gl_2_channels(Converter):
             'init': 'random',
             'random_state': None,
 
-            'hop_length': spectogram_kwargs['hop_length'],
-            'win_length': spectogram_kwargs['win_length'],
-            'window': spectogram_kwargs['window'],
-            'center': spectogram_kwargs['center'],
+            'hop_length': spectrogram_kwargs['hop_length'],
+            'win_length': spectrogram_kwargs['win_length'],
+            'window': spectrogram_kwargs['window'],
+            'center': spectrogram_kwargs['center'],
 
             'n_fft':None,
             'length':None

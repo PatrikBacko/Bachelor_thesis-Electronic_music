@@ -3,7 +3,7 @@ import numpy as np
 import os
 import gc
 
-from src.VAE.utils.data import load_wave, get_spectogram
+from src.VAE.utils.data import load_wave, get_spectrogram
 from src.VAE.utils.conversion import pad_or_trim
 
 
@@ -39,27 +39,27 @@ def prepare_train_loader(data_dir, sample_groups_list, length, batch_size, conve
     '''
 
     paths_to_samples = _get_paths_to_samples(data_dir, sample_groups_list)
-    padded_spectograms = [pad_or_trim(spectogram, length, conversion_config) for spectogram in 
-                          [get_spectogram(wave, sr, conversion_config) for wave, sr in 
+    padded_spectrograms = [pad_or_trim(spectrogram, length, conversion_config) for spectrogram in 
+                          [get_spectrogram(wave, sr, conversion_config) for wave, sr in 
                            [load_wave(path) for path in paths_to_samples]]]
 
     if scaler:
-        raveled_spectograms = np.array([spectogram.ravel() for spectogram in padded_spectograms])
-        scaler = scaler.fit(raveled_spectograms)
+        raveled_spectrograms = np.array([spectrogram.ravel() for spectrogram in padded_spectrograms])
+        scaler = scaler.fit(raveled_spectrograms)
 
-        transformed_spectograms = scaler.transform(raveled_spectograms)
-        transformed_spectograms = transformed_spectograms.reshape(-1, conversion_config['channels'], conversion_config['height'], length)
-        del raveled_spectograms
+        transformed_spectrograms = scaler.transform(raveled_spectrograms)
+        transformed_spectrograms = transformed_spectrograms.reshape(-1, conversion_config['channels'], conversion_config['height'], length)
+        del raveled_spectrograms
     else:
-        transformed_spectograms = np.array(padded_spectograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
+        transformed_spectrograms = np.array(padded_spectrograms).reshape(-1, conversion_config['channels'], conversion_config['height'], length)
 
-    del padded_spectograms
+    del padded_spectrograms
     gc.collect()
 
-    spectogram_tensor = torch.tensor(transformed_spectograms)
-    del transformed_spectograms
+    spectrogram_tensor = torch.tensor(transformed_spectrograms)
+    del transformed_spectrograms
     gc.collect()
         
-    train_loader = torch.utils.data.DataLoader(spectogram_tensor, batch_size=batch_size, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(spectrogram_tensor, batch_size=batch_size, shuffle=True)
     
     return train_loader

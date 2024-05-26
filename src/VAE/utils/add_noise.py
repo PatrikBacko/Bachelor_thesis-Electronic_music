@@ -47,37 +47,37 @@ def constant_noise(mean: float, variance: float, shape: tuple[int, int]) -> np.n
     return np.full(shape, mean)
 
 
-def add_noise(spectogram, noise) -> callable:
+def add_noise(spectrogram, noise) -> callable:
     """
-    Add noise to the spectogram
+    Add noise to the spectrogram
 
     params:
-        - spectogram: spectogram to add noise to
+        - spectrogram: spectrogram to add noise to
         - noise: noise array
     
     returns:
-        - spectogram with added noise
+        - spectrogram with added noise
     """
-    return spectogram + noise.astype(np.float32)
+    return spectrogram + noise.astype(np.float32)
 
-def multiply_noise(spectogram, noise) -> callable:
+def multiply_noise(spectrogram, noise) -> callable:
     """
-    Multiply the spectogram with noise
+    Multiply the spectrogram with noise
 
     params:
-        - spectogram: spectogram to multiply with noise
+        - spectrogram: spectrogram to multiply with noise
         - noise: noise array
     
     returns:
-        - spectogram multiplied with noise
+        - spectrogram multiplied with noise
     """
-    return spectogram * noise.astype(np.float32)
+    return spectrogram * noise.astype(np.float32)
 
 
 
 def generate_noise(mean, variance, distribution, scope, operation) -> callable:
     """
-    Generate noise function based on the given arguments, returns the function that applies the noise to the spectogram
+    Generate noise function based on the given arguments, returns the function that applies the noise to the spectrogram
 
     params:
         - mean: mean of the noise distribution
@@ -100,18 +100,18 @@ def generate_noise(mean, variance, distribution, scope, operation) -> callable:
 
     #noise scope
     if scope == "pixel":
-        scope_func = lambda spectogram: dist_func(spectogram.shape)
+        scope_func = lambda spectrogram: dist_func(spectrogram.shape)
     elif scope == "column":
-        scope_func = lambda spectogram: np.outer(dist_func(spectogram.shape[1]), np.ones(spectogram.shape[0]))
+        scope_func = lambda spectrogram: np.outer(dist_func(spectrogram.shape[1]), np.ones(spectrogram.shape[0]))
     elif scope == "row":
-        scope_func = lambda spectogram: np.outer(np.ones(spectogram.shape[1]), dist_func(spectogram.shape[0]))
+        scope_func = lambda spectrogram: np.outer(np.ones(spectrogram.shape[1]), dist_func(spectrogram.shape[0]))
     elif scope == "entire_picture":
-        scope_func = lambda spectogram: np.full(spectogram.shape, dist_func((1,))[0])
+        scope_func = lambda spectrogram: np.full(spectrogram.shape, dist_func((1,))[0])
 
     #noise operation type
     if operation == "additive":
-        noise_function = lambda spectogram: add_noise(spectogram, scope_func(spectogram))
+        noise_function = lambda spectrogram: add_noise(spectrogram, scope_func(spectrogram))
     elif operation == "multiplicative":
-        noise_function = lambda spectogram: multiply_noise(spectogram, scope_func(spectogram))
+        noise_function = lambda spectrogram: multiply_noise(spectrogram, scope_func(spectrogram))
 
     return noise_function

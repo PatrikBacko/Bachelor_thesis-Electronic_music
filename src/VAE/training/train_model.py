@@ -25,7 +25,7 @@ def loss_function(reconstructed_x, x, mu, logvar, kl_regularisation):
 
 def add_noise_to_batch(batch: torch.tensor, noise_function: callable) -> torch.tensor:
     '''
-    Add noise to the batch of spectograms
+    Add noise to the batch of spectrograms
 
     params:
         - batch: batch to add noise to
@@ -54,7 +54,7 @@ def train(model, train_loader, epochs, device, noise_function=lambda x:x, kl_reg
         train_loader - dataloader with training data
         epochs - number of epochs to train the model
         device - device to train the model on
-        noise_function - function to add noise to the spectogram
+        noise_function - function to add noise to the spectrogram
 
     returns:
         losses - list of losses for each epoch

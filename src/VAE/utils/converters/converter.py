@@ -4,35 +4,35 @@ from abc import ABC, abstractmethod
 class Converter(ABC):
 
    @abstractmethod
-   def convert_spectogram_to_wave(self, spectogram, sr, spectogram_kwargs):
+   def convert_spectrogram_to_wave(self, spectrogram, sr, spectrogram_kwargs):
       '''
-      Converts a spectogram to wave
+      Converts a spectrogram to wave
 
       params:
-         spectogram (np.ndarray) - mfcc to convert
+         spectrogram (np.ndarray) - mfcc to convert
          sr (int) - sample rate of the wave
-         spectogram_kwargs (dict) - kwargs for the inverse spectogram
+         spectrogram_kwargs (dict) - kwargs for the inverse spectrogram
 
       returns:
          np.array - wave      
 
       raises:
-         InvalidSamplingException - if there is an error with spectogram inverse conversion
+         InvalidSamplingException - if there is an error with spectrogram inverse conversion
       '''
       ...
 
    @abstractmethod
-   def convert_wave_to_spectogram(self, wave, sr, spectogram_kwargs):
+   def convert_wave_to_spectrogram(self, wave, sr, spectrogram_kwargs):
       '''
-      Converts a wave to spectogram
+      Converts a wave to spectrogram
 
       params:
-         wave (np.array) - wave to convert to spectogram
+         wave (np.array) - wave to convert to spectrogram
          sr (int) - sample rate of the wave
-         spectogram_kwargs (dict) - kwargs for the spectogram
+         spectrogram_kwargs (dict) - kwargs for the spectrogram
 
       returns:
-         np.ndarray - spectogram
+         np.ndarray - spectrogram
       '''
       ... 
 
@@ -43,7 +43,7 @@ class Converter(ABC):
       
       params:
          conversion_type (str) - type of conversion
-         pad_or_trim_length (int) - length to pad or trim the spectogram
+         pad_or_trim_length (int) - length to pad or trim the spectrogram
 
       returns:
          dict - default kwargs for the conversion
@@ -51,14 +51,14 @@ class Converter(ABC):
       ... 
 
    @abstractmethod
-   def pad_or_trim_spectogram(self, spectogram, length):
+   def pad_or_trim_spectrogram(self, spectrogram, length):
       '''
-      Pads or trims the spectogram to the desired length
+      Pads or trims the spectrogram to the desired length
 
       params:
          conversion_config (dict) - configuration for the conversion
 
       returns:
-         np.ndarray - padded or trimmed spectogram
+         np.ndarray - padded or trimmed spectrogram
       '''
       ...

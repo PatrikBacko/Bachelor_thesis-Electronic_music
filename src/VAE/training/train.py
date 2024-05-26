@@ -54,7 +54,7 @@ def parse_arguments():
     
     
     #Noise arguments
-    parser.add_argument('-n','--noise', type=bool, default=False, help='Add noise to the spectograms. Config of noise can be set with other noise arguments.'
+    parser.add_argument('-n','--noise', type=bool, default=False, help='Add noise to the spectrograms. Config of noise can be set with other noise arguments.'
                         'if this argument is False, other arguments will be ignored. (default is False)\n')
     
     #argument for noise variance
@@ -69,16 +69,16 @@ def parse_arguments():
                         "constant: value is equal to the chosen mean"
                         , choices=NOISE_GENERATING_DISTS, default="constant")
     #argument for noise operation type
-    parser.add_argument("-o", "--operation", help="noise operation type (how will be noise added to the spectogram). (default is additive)"
-                        "additive: add noise to the spectogram"
-                        "multiplicative: multiply the spectogram with noise (noise values are coefficients)"
+    parser.add_argument("-o", "--operation", help="noise operation type (how will be noise added to the spectrogram). (default is additive)"
+                        "additive: add noise to the spectrogram"
+                        "multiplicative: multiply the spectrogram with noise (noise values are coefficients)"
                         , choices=NOISE_OPERATION_TYPES, default="additive")
     #argument for noise scope
     parser.add_argument("-s", "--scope", help="noise scope. (default is pixel)"
-                        "pixel: add noise to each pixel in the spectogram"
-                        "column: each column in the spectogram will have the same noise, but different from other columns"
-                        "row: each row in the spectogram will have the same noise, but different from other rows"
-                        "entire_picture: the entire spectogram will have the same noise"
+                        "pixel: add noise to each pixel in the spectrogram"
+                        "column: each column in the spectrogram will have the same noise, but different from other columns"
+                        "row: each row in the spectrogram will have the same noise, but different from other rows"
+                        "entire_picture: the entire spectrogram will have the same noise"
                         , choices=NOISE_SCOPE, default="pixel")
 
     return parser
@@ -171,7 +171,7 @@ def main(argv: Sequence[str] | None =None) -> None:
         print(f'> Noise function created.\n', flush=True)
     else:
         noise_function = lambda x:x
-        print(f'> No noise added to the spectograms.\n', flush=True)
+        print(f'> No noise added to the spectrograms.\n', flush=True)
                 
     #train the model
     losses = train(model, train_loader, config.epochs, device, noise_function=noise_function, kl_regularisation=config.kl_regularisation, learning_rate=config.learning_rate)

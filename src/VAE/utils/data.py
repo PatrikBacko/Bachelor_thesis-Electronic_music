@@ -8,7 +8,7 @@ import scipy.io.wavfile as wav
 
 import torch
 
-from src.VAE.utils.conversion import convert_wave_to_spectogram, convert_spectogram_to_wave, pad_or_trim
+from src.VAE.utils.conversion import convert_wave_to_spectrogram, convert_spectrogram_to_wave, pad_or_trim
 from src.VAE.utils.scaler import load_scaler
 from src.VAE.exceptions.InvalidSamplingException import InvalidInverseConversionException
 
@@ -111,68 +111,68 @@ def save_wave(wave, sr, path_to_save):
     wav.write(str(path_to_save), sr, wave)
 
 
-def get_wave_from_spectogram(spectogram, sr, conversion_config):
+def get_wave_from_spectrogram(spectrogram, sr, conversion_config):
     '''
-    Gets a spectogram and returns its inverse
+    Gets a spectrogram and returns its inverse
 
     params:
-        spectogram (np.ndarray) - spectogram to get inverse of
+        spectrogram (np.ndarray) - spectrogram to get inverse of
 
     returns:
-        np.ndarray - wave, inverse of the spectogram
+        np.ndarray - wave, inverse of the spectrogram
 
     raises:
-        InvalidSamplingException - if there is an error with spectogram inverse conversion
+        InvalidSamplingException - if there is an error with spectrogram inverse conversion
     '''
 
-    return convert_spectogram_to_wave(spectogram, sr, conversion_config)
+    return convert_spectrogram_to_wave(spectrogram, sr, conversion_config)
     
 
-def tensor_to_spectogram(tensor, config):
+def tensor_to_spectrogram(tensor, config):
     '''
-    Converts a tensor to spectogram
+    Converts a tensor to spectrogram
 
     params:
         tensor (torch.tensor) - tensor to convert
         config (utils.Config) - config of the model
 
     returns:
-        np.ndarray - converted tensor to spectogram
+        np.ndarray - converted tensor to spectrogram
     '''
     shape = tensor.shape[1:]
     if shape[0] == 1:
         shape = shape[1:]
 
-    spectogram = to_numpy(tensor).reshape(shape)
+    spectrogram = to_numpy(tensor).reshape(shape)
 
     if config.scaler is not None:
         scaler = load_scaler(config.scaler)
-        spectogram = scaler.inverse_transform(spectogram.reshape(1, -1)).reshape(shape)
+        spectrogram = scaler.inverse_transform(spectrogram.reshape(1, -1)).reshape(shape)
 
-    return spectogram
+    return spectrogram
 
 
 
-def get_spectogram(wave, sr, conversion_config):
+def get_spectrogram(wave, sr, conversion_config):
     '''
-    Gets a wave and its sample rate, then returns its spectogram
+    Gets a wave and its sample rate, then returns its spectrogram
 
     params:
-        wave (np.array) - wave to convert to spectogram
+        wave (np.array) - wave to convert to spectrogram
         sr (int) - sample rate of the wave
-        conversion_config (dict) - spectogram conversion config
+        conversion_config (dict) - spectrogram conversion config
 
     returns:
-        np.ndarray - spectogram of the wave with given config
+        np.ndarray - spectrogram of the wave with given config
     '''
 
-    return convert_wave_to_spectogram(wave, sr, conversion_config)
+    return convert_wave_to_spectrogram(wave, sr, conversion_config)
 
 
 
 def prepare_wave_for_model(wave, sr, config):
     '''
-    prepares a wave for the model (spectogram conversion, padding or trimming, reshaping to torch tensor)
+    prepares a wave for the model (spectrogram conversion, padding or trimming, reshaping to torch tensor)
 
     params:
         wave (np.array) - wave to prepare
@@ -183,14 +183,14 @@ def prepare_wave_for_model(wave, sr, config):
         torch.tensor - prepared wave
     '''
 
-    spectogram = get_spectogram(wave, sr, conversion_config=config.conversion_config)
-    spectogram = pad_or_trim(spectogram, config.pad_or_trim_length, config.conversion_config)
+    spectrogram = get_spectrogram(wave, sr, conversion_config=config.conversion_config)
+    spectrogram = pad_or_trim(spectrogram, config.pad_or_trim_length, config.conversion_config)
 
     if config.scaler is not None:
         scaler = load_scaler(config.scaler)
-        spectogram = scaler.transform(spectogram.reshape(1, -1)).reshape(spectogram.shape)
+        spectrogram = scaler.transform(spectrogram.reshape(1, -1)).reshape(spectrogram.shape)
 
-    tensor = torch.tensor(spectogram).view(-1, config.conversion_config['channels'], config.conversion_config['height'], config.pad_or_trim_length)
+    tensor = torch.tensor(spectrogram).view(-1, config.conversion_config['channels'], config.conversion_config['height'], config.pad_or_trim_length)
 
     return tensor
 
@@ -207,12 +207,12 @@ def tensor_to_wave(tensor, sr, config):
         np.array - converted tensor to wave
 
     raises:
-        InvalidSamplingException - if there is an error with spectogram inverse conversion
+        InvalidSamplingException - if there is an error with spectrogram inverse conversion
     '''
 
-    spectogram = tensor_to_spectogram(tensor, config)
+    spectrogram = tensor_to_spectrogram(tensor, config)
 
     try:
-        return get_wave_from_spectogram(spectogram, sr, config.conversion_config)
+        return get_wave_from_spectrogram(spectrogram, sr, config.conversion_config)
     except Exception as e:
         raise InvalidInverseConversionException(f'Error with inverse conversion: {e}')

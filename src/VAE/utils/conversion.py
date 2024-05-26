@@ -49,38 +49,38 @@ def get_default_conversion_config(conversion_type):
 
 
 
-def convert_wave_to_spectogram(wave, sr, conversion_config):
+def convert_wave_to_spectrogram(wave, sr, conversion_config):
     '''
-    Gets a wave and its sample rate, then returns its spectogram
+    Gets a wave and its sample rate, then returns its spectrogram
 
     params:
-        wave (np.array) - wave to convert to spectogram
+        wave (np.array) - wave to convert to spectrogram
         sr (int) - sample rate of the wave
-        conversion_config (dict) - config for the spectogram conversion
+        conversion_config (dict) - config for the spectrogram conversion
     '''
 
-    return _get_converter(conversion_config['type']).convert_wave_to_spectogram(wave, sr, conversion_config['kwargs'])
+    return _get_converter(conversion_config['type']).convert_wave_to_spectrogram(wave, sr, conversion_config['kwargs'])
 
 
-def convert_spectogram_to_wave(spectogram, sr, conversion_config):
+def convert_spectrogram_to_wave(spectrogram, sr, conversion_config):
     '''
-    Gets a spectogram and returns invertly converted wave
+    Gets a spectrogram and returns invertly converted wave
 
     params:
-        spectogram (np.ndarray) - spectogram to convert
+        spectrogram (np.ndarray) - spectrogram to convert
         sr (int) - sample rate of the wave
-        conversion_config (dict) - config for the spectogram conversion
+        conversion_config (dict) - config for the spectrogram conversion
     '''
 
-    return _get_converter(conversion_config['type']).convert_spectogram_to_wave(spectogram, sr, conversion_config['kwargs'])
+    return _get_converter(conversion_config['type']).convert_spectrogram_to_wave(spectrogram, sr, conversion_config['kwargs'])
 
-def pad_or_trim(spectogram, length, conversion_config):
+def pad_or_trim(spectrogram, length, conversion_config):
     '''
-    Pads or trims the spectogram to the desired length
+    Pads or trims the spectrogram to the desired length
 
     params:
-        spectogram (np.ndarray) - spectogram to pad or trim
-        length (int) - length to pad or trim the spectogram
+        spectrogram (np.ndarray) - spectrogram to pad or trim
+        length (int) - length to pad or trim the spectrogram
         conversion_config (dict) - configuration for the conversion
     '''
-    return _get_converter(conversion_config['type']).pad_or_trim_spectogram(spectogram, length)
+    return _get_converter(conversion_config['type']).pad_or_trim_spectrogram(spectrogram, length)
