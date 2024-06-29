@@ -1,15 +1,17 @@
-from src.VAE.models.VAE_1 import VAE_1
-from src.VAE.models.VAE_2 import VAE_2
-from src.VAE.models.VAE_3 import VAE_3
-from src.VAE.models.VAE_4 import VAE_4
-from src.VAE.models.VAE_3_old import VAE_3_old
-from src.VAE.models.VAE_3_dropout import VAE_3_dropout
-from src.VAE.models.VAE_4_dropout import VAE_4_dropout
-from src.VAE.models.VAE_5_tied_weights import VAE_5_tied_weights
-from src.VAE.models.VAE_6 import VAE_6
+from src.VAE.models.models_1.VAE_1 import VAE_1
+from src.VAE.models.models_1.VAE_2 import VAE_2
+from src.VAE.models.models_1.VAE_3 import VAE_3
+from src.VAE.models.models_1.VAE_4 import VAE_4
+from src.VAE.models.models_1.VAE_3_old import VAE_3_old
+from src.VAE.models.models_1.VAE_3_dropout import VAE_3_dropout
+from src.VAE.models.models_1.VAE_4_dropout import VAE_4_dropout
+from src.VAE.models.models_1.VAE_5_tied_weights import VAE_5_tied_weights
+from src.VAE.models.models_1.VAE_6 import VAE_6
 
-from src.VAE.models.VAE_4_2_channels import VAE_4_2_channels
-from src.VAE.models.VAE_4_stft import VAE_4_stft
+from src.VAE.models.models_1.VAE_4_2_channels import VAE_4_2_channels
+from src.VAE.models.models_1.VAE_4_stft import VAE_4_stft
+
+from src.VAE.models.models_magpie.VAE_magpie_1 import VAE_magpie_1
 
 import torch
 
@@ -25,7 +27,9 @@ MODELS = {
         'VAE_6' : VAE_6,
 
         'VAE_4_2_channels': VAE_4_2_channels,
-        'VAE_4_stft': VAE_4_stft
+        'VAE_4_stft': VAE_4_stft,
+
+        'VAE_magpie_1': VAE_magpie_1
         }
 
 def get_models_list():

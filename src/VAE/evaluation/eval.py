@@ -132,7 +132,12 @@ def main(argv: Sequence[str] | None = None) -> None:
             continue
 
         start_job = datetime.datetime.now()
-        job()
+        
+        try:
+            job()
+        except Exception as e:
+            print(f'\tERROR: {e}')
+
         end_job = datetime.datetime.now()
         
         print(f'\tfinished in: {(end_job-start_job)}')
