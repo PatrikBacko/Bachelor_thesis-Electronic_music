@@ -27,7 +27,7 @@ class Encoder_fc_block(nn.Module):
                 torch.nn.init.zeros_(layer.bias)
             
         
-        nn.init.normal_(self.fc_logvar.weight, mean=0.0, std=0.001)
+        # nn.init.normal_(self.fc_logvar.weight, mean=0.0, std=0.001)
 
     def forward(self, x):
         x = x.view(-1, self.fc_dims)
@@ -37,6 +37,8 @@ class Encoder_fc_block(nn.Module):
 
         mu = self.fc_mean(x)
         logvar = self.fc_logvar(x)
+
+        print(f'x (tensor frm which logvar is made) max and min: {x.max().item()}, {x.min().item()}')
 
         return mu, logvar
     

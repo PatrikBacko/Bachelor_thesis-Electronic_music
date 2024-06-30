@@ -159,7 +159,7 @@ class Decoder(nn.Module):
                                     residual_output_padding=(0,1))
         
         self.block_9 = Deconv_block(in_channels=16,
-                                    out_channels=1,
+                                    out_channels=16,
                                     kernel_size_1=4,
                                     kernel_size_2=4,
                                     stride=1,
@@ -169,6 +169,8 @@ class Decoder(nn.Module):
                                     output_padding_2=0,
                                     residual_padding=0,
                                     residual_output_padding=0)
+        
+        self.final_conv = nn.ConvTranspose2d(in_channels=16, out_channels=1, kernel_size=3, stride=1, padding=1, output_padding=0)
 
     def forward(self, x):
         x = self.block_fc(x)
@@ -186,6 +188,7 @@ class Decoder(nn.Module):
         x = self.block_8(x)
 
         x = self.block_9(x)
+        x = self.final_conv(x)
 
         return x
 
@@ -208,6 +211,12 @@ class VAE_magpie_1(nn.Module):
         mu, logvar = self.encoder(x)
         z = self.reparameterize(mu, logvar)
         reconstructed_x = self.decoder(z)
+        print()
+        print(f'logvar max and min: {logvar.max().item()}, {logvar.min().item()}')
+        print(f'mu max and min: {mu.max().item()}, {mu.min().item()}')
+        print(f'z max and min: {z.max().item()}, {z.min().item()}')
+        print(f'reconstructed_x max and min: {reconstructed_x.max().item()}, {reconstructed_x.min().item()}')
+        print()
         return reconstructed_x, mu, logvar
     
     def encode(self, x):
