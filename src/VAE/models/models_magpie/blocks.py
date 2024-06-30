@@ -25,6 +25,9 @@ class Encoder_fc_block(nn.Module):
             init_func(layer.weight)
             if layer.bias is not None:
                 torch.nn.init.zeros_(layer.bias)
+            
+        
+        nn.init.normal_(self.fc_logvar.weight, mean=0.0, std=0.001)
 
     def forward(self, x):
         x = x.view(-1, self.fc_dims)
@@ -97,6 +100,11 @@ class Conv_block(nn.Module):
             if layer.bias is not None:
                 torch.nn.init.zeros_(layer.bias)
 
+        for bn in [self.batch_norm_1, self.batch_norm_2, self.batch_norm_residual]:
+            torch.nn.init.ones_(bn.weight)
+            torch.nn.init.zeros_(bn.bias)
+
+
     def forward(self, x):
         residual = x.clone()
 
@@ -160,6 +168,10 @@ class Deconv_block(nn.Module):
             init_func(layer.weight)
             if layer.bias is not None:
                 torch.nn.init.zeros_(layer.bias)
+
+        for bn in [self.batch_norm_1, self.batch_norm_2, self.batch_norm_residual]:
+            torch.nn.init.ones_(bn.weight)
+            torch.nn.init.zeros_(bn.bias)
 
     def forward(self, x):
         residual = x.clone()
