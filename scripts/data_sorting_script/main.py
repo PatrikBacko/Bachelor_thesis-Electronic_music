@@ -84,7 +84,7 @@ def sort_samples(start_path, source_path, dest_path, sample_name, regex_pattern)
     visitor = Sort_with_regex_visitor(dest_path_loops, "loop")
     process_dir_content(dest_path_sure, visitor)
 
-    visitor = Sort_with_size_visitor(dest_path_manual, 500_000)
+    visitor = Sort_with_size_visitor(dest_path_manual, 1_000_000)
     process_dir_content(dest_path_sure, visitor)
 
 
@@ -127,7 +127,7 @@ def main():
     remove_not_wav_files_and_files(SOURCE_PATH)
 
     # path = r"C:\Users\llama\Desktop\programming shit\Bakalarka\kick_samples\manual_check"
-    # process_dir_content(path, File_Delegate_visitor(lambda path: os.path.getsize(path) > 2_000_000, 
+    # process_dir_content(path, File_Delegate_visitor(lambda path: os.path.getsize(path) > 1_000_000, 
     #                                                 lambda path: os.remove(path)))
     
     
