@@ -96,7 +96,7 @@ class StftConverter_gl(Converter):
             spectrogram =  spectrogram[:, :length]
         else:
             last_column = spectrogram[:, -1:]
-            padding = np.repeat(last_column, length - spectrogram.shape[1], axis=1)
+            padding = np.repeat(np.zeros_like(last_column), length - spectrogram.shape[1], axis=1)
 
             spectrogram = np.concatenate((spectrogram, padding), axis=1)
 

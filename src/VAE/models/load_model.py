@@ -6,7 +6,6 @@ from src.VAE.models.models_1.VAE_3_old import VAE_3_old
 from src.VAE.models.models_1.VAE_3_dropout import VAE_3_dropout
 from src.VAE.models.models_1.VAE_4_dropout import VAE_4_dropout
 from src.VAE.models.models_1.VAE_5_tied_weights import VAE_5_tied_weights
-from src.VAE.models.models_1.VAE_6 import VAE_6
 
 from src.VAE.models.models_1.VAE_4_2_channels import VAE_4_2_channels
 from src.VAE.models.models_1.VAE_4_stft import VAE_4_stft
@@ -24,7 +23,6 @@ MODELS = {
         'VAE_3_dropout': VAE_3_dropout,
         'VAE_4_dropout': VAE_4_dropout,
         'VAE_5_tied_weights': VAE_5_tied_weights,
-        'VAE_6' : VAE_6,
 
         'VAE_4_2_channels': VAE_4_2_channels,
         'VAE_4_stft': VAE_4_stft,

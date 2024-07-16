@@ -17,7 +17,6 @@ class Encoder(nn.Module):
         self.block_1 = Conv_block(in_channels=1, out_channels=16, kernel_size=3, stride=1, padding=(1,1), residual_padding=0, init_func=init)
 
         self.block_2 = Conv_block(in_channels=16, out_channels=32, kernel_size=3, stride=2, padding=(1,1), residual_padding=0, init_func=init)
-        # self.block_2 = Conv_block(in_channels=1, out_channels=32, kernel_size=3, stride=2, padding=(1,1), residual_padding=0, init_func=init)
         self.block_3 = Conv_block(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=(1,1), residual_padding=0, init_func=init)
 
         self.block_4 = Conv_block(in_channels=32, out_channels=64, kernel_size=3, stride=2, padding=(1,1), residual_padding=0, init_func=init)
@@ -220,12 +219,7 @@ class VAE_magpie_1(nn.Module):
         mu, logvar = self.encoder(x)
         z = self.reparameterize(mu, logvar)
         reconstructed_x = self.decoder(z)
-        # print()
-        # print(f'logvar max and min: {logvar.max().item()}, {logvar.min().item()}')
-        # print(f'mu max and min: {mu.max().item()}, {mu.min().item()}')
-        # print(f'z max and min: {z.max().item()}, {z.min().item()}')
-        # print(f'reconstructed_x max and min: {reconstructed_x.max().item()}, {reconstructed_x.min().item()}')
-        # print()
+
         return reconstructed_x, mu, logvar
     
     def encode(self, x):
