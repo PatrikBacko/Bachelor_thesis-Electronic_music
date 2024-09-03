@@ -3,6 +3,7 @@
 - Data are sorted into directories named after drum type of samples which are inside. Inside these directories are 2 ".csv" files and directory with ".wav" samples. 
   - First file is called "{drum_type}_paths.csv" and for each sample contains relative path to the original sample, in raw dataset.
   - Second file is called "{drum_type}_genres.csv" and for each sample contains its genre.
+- For every drum type there is also a test set with 10 to 20 samples, which are not in the training set.
 - There are also raw data, which are downloaded .zip directories from which the data were sorted.
   - raw data directory also contains "raw_data_origin.csv" files with links to sites from which the data were downloaded.
 
