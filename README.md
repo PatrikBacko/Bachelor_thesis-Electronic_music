@@ -10,10 +10,12 @@ a model that was reconstructing and generating quality samples; however, they co
 noise artefact we could not get rid of. Based on the results of PCA and convex combinations
 methods we found out that the latent space has “meaningful” properties.
 
+Short video with results is available [here](https://www.youtube.com/watch?v=ldmX0wu31OQ).
+
 ## Dataset
 Dataset is available on:
 - [Raw data](https://cunicz-my.sharepoint.com/:f:/g/personal/22056127_cuni_cz/ElrNvHbS04FNt7k4K-4qZ90BecH-AweBeUD-4xn8GA3gww?e=kWVivM)
-- [Sorted data](https://cunicz-my.sharepoint.com/:f:/g/personal/22056127_cuni_cz/EnKfBOcrdGhCvrBcEmO8AlQBeQq-iCx2xQ4FyXJAAz9ttA?e=18YsnK)
+- [Sorted data](https://cunicz-my.sharepoint.com/:f:/g/personal/22056127_cuni_cz/EnKfBOcrdGhCvrBcEmO8AlQB4PW03dqRuabq66f2ZQFw3Q?e=Xz6snE)
 
 Raw data are downloaded sample libraries from the internet. Sorted data are the the data used for traning and evaluation. They were manually and programmatically cleaned from files that were not drum one-shot samples and then they were sorted into 9 categories by the type of drum sound they represent and 11 categories by the electronic music genre. (if the links do not work, please contact me)
 
